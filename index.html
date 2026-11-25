@@ -1809,13 +1809,12 @@
         }
 
         // ==================== 7. 四大定制主题疗愈音景引擎（林间清晨 / 雨夜静谧 / 圣诞前夜 / 海风舒展） ====================
-// ==================== 7. 四大定制主题疗愈音景引擎（MP3 + 白噪音双轨） ====================
-const AUDIO_FOLDER = './audio/'; // 若仓库里实际叫“声音的”，请改为 './声音的/'
+// ==================== 7. 四大定制主题疗愈音景引擎（根目录 MP3 + 白噪音双轨） ====================
 const MP3_TRACK_URLS = [
-    `${AUDIO_FOLDER}Morning_Breathes.mp3`, // 0: 林间清晨
-    `${AUDIO_FOLDER}Canopy.mp3`,         // 1: 雨夜静谧（若你有单独雨声可替换）
-    `${AUDIO_FOLDER}Christmas.mp3`,      // 2: 圣诞前夜
-    `${AUDIO_FOLDER}summer.mp3`          // 3: 海风舒展
+    './Morning_Breathes.mp3', // 0: 林间清晨
+    './audio:Canopy.mp3',     // 1: 雨夜静谧（建议仓库里改成 ./Canopy.mp3）
+    './Christmas.mp3',        // 2: 圣诞前夜
+    './summer.mp3'            // 3: 海风舒展
 ];
 
 let audioCtx = null;
@@ -1824,7 +1823,6 @@ let activeNoiseNodes = [];
 let mp3Player = null;
 let isMusicPlaying = false;
 let currentTrackIndex = 0;
-let lastAudioError = '';
 
 const TRACK_META = [
     { name: '林间清晨 · Morning_Breathes', subtitle: 'Morning_Breathes.mp3 · 轻音乐与环境白噪音' },
@@ -1891,16 +1889,11 @@ function ensureMp3Player() {
         mp3Player = new Audio();
         mp3Player.loop = true;
         mp3Player.preload = 'auto';
-        mp3Player.addEventListener('error', () => {
-            lastAudioError = `无法加载音频: ${mp3Player.src}`;
-            console.error(lastAudioError);
-        });
     }
     return mp3Player;
 }
 
 function startAudioTrack(index) {
-    lastAudioError = '';
     const player = ensureMp3Player();
     const targetUrl = MP3_TRACK_URLS[index] || MP3_TRACK_URLS[0];
 
@@ -1910,14 +1903,7 @@ function startAudioTrack(index) {
     player.load();
     updateMixLevels();
 
-    const playPromise = player.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(err => {
-            lastAudioError = err?.message || '播放被拦截或文件不存在';
-            console.warn('MP3 播放失败:', targetUrl, err);
-        });
-    }
-
+    player.play().catch(err => console.warn('MP3 播放失败:', targetUrl, err));
     startAmbientNoiseLayer();
 }
 
