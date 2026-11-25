@@ -1809,11 +1809,13 @@
         }
 
         // ==================== 7. 四大定制主题疗愈音景引擎（林间清晨 / 雨夜静谧 / 圣诞前夜 / 海风舒展） ====================
+// ==================== 7. 四大定制主题疗愈音景引擎（MP3 + 白噪音双轨） ====================
+const AUDIO_FOLDER = './audio/'; // 若仓库里实际叫“声音的”，请改为 './声音的/'
 const MP3_TRACK_URLS = [
-    './audio/forest-morning.mp3',
-    './audio/rain-night.mp3',
-    './audio/christmas-eve.mp3',
-    './audio/summer.mp3'
+    `${AUDIO_FOLDER}Morning_Breathes.mp3`, // 0: 林间清晨
+    `${AUDIO_FOLDER}Canopy.mp3`,         // 1: 雨夜静谧（若你有单独雨声可替换）
+    `${AUDIO_FOLDER}Christmas.mp3`,      // 2: 圣诞前夜
+    `${AUDIO_FOLDER}summer.mp3`          // 3: 海风舒展
 ];
 
 let audioCtx = null;
@@ -1822,33 +1824,42 @@ let activeNoiseNodes = [];
 let mp3Player = null;
 let isMusicPlaying = false;
 let currentTrackIndex = 0;
+let lastAudioError = '';
 
 const TRACK_META = [
-    { name: '林间清晨 · 晨雾微风与露水钢琴', subtitle: '林间清晨 · 本地 MP3 音轨与环境白噪音' },
-    { name: '雨夜静谧 · 窗畔细雨与深邃琴音', subtitle: '雨夜静谧 · 本地 MP3 音轨与环境白噪音' },
-    { name: '圣诞前夜 · 暖炉微响与冬夜柔钢', subtitle: '圣诞前夜 · 本地 MP3 音轨与环境白噪音' },
-    { name: '海风舒展 · 夏日潮汐与远方海鸥', subtitle: '海风舒展 · 本地 MP3 音轨与环境白噪音' }
+    { name: '林间清晨 · Morning_Breathes', subtitle: 'Morning_Breathes.mp3 · 轻音乐与环境白噪音' },
+    { name: '雨夜静谧 · Canopy', subtitle: 'Canopy.mp3 · 轻音乐与环境白噪音' },
+    { name: '圣诞前夜 · Christmas', subtitle: 'Christmas.mp3 · 轻音乐与环境白噪音' },
+    { name: '海风舒展 · summer', subtitle: 'summer.mp3 · 轻音乐与环境白噪音' }
 ];
 
 function toggleMusicModal() {
-    document.getElementById('modal-music').classList.toggle('hidden');
+    document.getElementById('modal-music')?.classList.toggle('hidden');
 }
 
 function stopNoiseLayer() {
     activeNoiseNodes.forEach(node => {
-        try { node.stop?.(); node.disconnect?.(); } catch {}
+        try {
+            if (typeof node.stop === 'function') node.stop();
+            if (typeof node.disconnect === 'function') node.disconnect();
+        } catch (e) {}
     });
     activeNoiseNodes = [];
 }
 
 function startAmbientNoiseLayer() {
     stopNoiseLayer();
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+
     if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioCtx = new AudioContextClass();
         noiseBusGain = audioCtx.createGain();
         noiseBusGain.connect(audioCtx.destination);
     }
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+    }
 
     const bufferSize = audioCtx.sampleRate * 3;
     const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -1875,18 +1886,39 @@ function startAmbientNoiseLayer() {
     activeNoiseNodes.push(source, lpFilter);
 }
 
-function startAudioTrack(index) {
+function ensureMp3Player() {
     if (!mp3Player) {
         mp3Player = new Audio();
         mp3Player.loop = true;
+        mp3Player.preload = 'auto';
+        mp3Player.addEventListener('error', () => {
+            lastAudioError = `无法加载音频: ${mp3Player.src}`;
+            console.error(lastAudioError);
+        });
     }
-    mp3Player.pause();
-    mp3Player.currentTime = 0;
-    mp3Player.src = MP3_TRACK_URLS[index] || MP3_TRACK_URLS[0];
-    mp3Player.play().catch(err => console.warn('音频播放提示:', err));
+    return mp3Player;
+}
+
+function startAudioTrack(index) {
+    lastAudioError = '';
+    const player = ensureMp3Player();
+    const targetUrl = MP3_TRACK_URLS[index] || MP3_TRACK_URLS[0];
+
+    player.pause();
+    player.currentTime = 0;
+    player.src = targetUrl;
+    player.load();
+    updateMixLevels();
+
+    const playPromise = player.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(err => {
+            lastAudioError = err?.message || '播放被拦截或文件不存在';
+            console.warn('MP3 播放失败:', targetUrl, err);
+        });
+    }
 
     startAmbientNoiseLayer();
-    updateMixLevels();
 }
 
 function stopAudioEngine() {
@@ -1897,13 +1929,16 @@ function stopAudioEngine() {
 }
 
 function updateMixLevels() {
-    const bgmVal = parseFloat(document.getElementById('bgm-volume')?.value ?? 0.55);
-    const noiseVal = parseFloat(document.getElementById('noise-volume')?.value ?? 0.45);
+    const bgmInput = document.getElementById('bgm-volume');
+    const noiseInput = document.getElementById('noise-volume');
+    const bgmVal = bgmInput ? parseFloat(bgmInput.value) : 0.55;
+    const noiseVal = noiseInput ? parseFloat(noiseInput.value) : 0.45;
+
     if (mp3Player) {
-        mp3Player.volume = Math.max(0, Math.min(1, bgmVal));
+        mp3Player.volume = Math.max(0, Math.min(1, Number.isFinite(bgmVal) ? bgmVal : 0.55));
     }
-    if (audioCtx && noiseBusGain) {
-        noiseBusGain.gain.setTargetAtTime(noiseVal, audioCtx.currentTime, 0.08);
+    if (audioCtx && noiseBusGain && Number.isFinite(noiseVal)) {
+        noiseBusGain.gain.setTargetAtTime(Math.max(0, Math.min(1, noiseVal)), audioCtx.currentTime, 0.08);
     }
 }
 
@@ -1914,8 +1949,12 @@ function selectTrack(index) {
             ? 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border-2 border-sage text-left transition'
             : 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border border-clay/70 text-left transition';
     });
-    document.getElementById('mobile-bar-track-name').textContent = TRACK_META[index].name;
-    document.getElementById('music-modal-subtitle').textContent = TRACK_META[index].subtitle;
+
+    const barName = document.getElementById('mobile-bar-track-name');
+    const modalSub = document.getElementById('music-modal-subtitle');
+    if (barName) barName.textContent = TRACK_META[index].name;
+    if (modalSub) modalSub.textContent = TRACK_META[index].subtitle;
+
     if (isMusicPlaying) {
         startAudioTrack(index);
     }
@@ -1933,22 +1972,26 @@ function togglePlayMusic() {
 
 function updateMusicUI() {
     const iconName = isMusicPlaying ? 'pause' : 'play';
-    document.getElementById('mobile-bar-play-icon').setAttribute('data-lucide', iconName);
-    document.getElementById('modal-play-icon').setAttribute('data-lucide', iconName);
-    document.getElementById('modal-play-text').textContent = isMusicPlaying ? '暂停播放' : '开启无缝疗愈音景';
+    document.getElementById('mobile-bar-play-icon')?.setAttribute('data-lucide', iconName);
+    document.getElementById('modal-play-icon')?.setAttribute('data-lucide', iconName);
+    const modalText = document.getElementById('modal-play-text');
+    if (modalText) {
+        modalText.textContent = isMusicPlaying ? '暂停播放' : '开启无缝疗愈音景';
+    }
 
     const headerDot = document.getElementById('header-music-dot');
     const mobileBar = document.getElementById('music-mini-mobile');
     if (isMusicPlaying) {
-        headerDot.className = 'w-2 h-2 rounded-full bg-sage animate-ping';
-        mobileBar.classList.remove('hidden');
+        if (headerDot) headerDot.className = 'w-2 h-2 rounded-full bg-sage animate-ping';
+        mobileBar?.classList.remove('hidden');
     } else {
-        headerDot.className = 'w-2 h-2 rounded-full bg-muted';
-        mobileBar.classList.add('hidden');
+        if (headerDot) headerDot.className = 'w-2 h-2 rounded-full bg-muted';
+        mobileBar?.classList.add('hidden');
     }
-    safeCreateIcons();
+    if (typeof safeCreateIcons === 'function') {
+        safeCreateIcons();
+    }
 }
-
         // ==================== 8. 浅色弥散风格呼吸正念引导计时器（三阶段治愈色彩流转） ====================
         let breathInterval = null;
         let isBreathing = false;
