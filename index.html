@@ -1809,464 +1809,145 @@
         }
 
         // ==================== 7. 四大定制主题疗愈音景引擎（林间清晨 / 雨夜静谧 / 圣诞前夜 / 海风舒展） ====================
-        let audioCtx = null;
-        let masterGain = null;
-        let bgmBusGain = null;
-        let noiseBusGain = null;
-        let activeNodes = [];
-        let sequencerTimer = null;
-        let ambienceEventTimer = null;
-        let isMusicPlaying = false;
-        let currentTrackIndex = 0;
+const MP3_TRACK_URLS = [
+    './audio/forest-morning.mp3',
+    './audio/rain-night.mp3',
+    './audio/christmas-eve.mp3',
+    './audio/summer.mp3'
+];
 
-        const TRACK_META = [
-            {
-                name: '林间清晨 · 晨雾微风与露水钢琴',
-                subtitle: '林间清晨 · 70 BPM 柔绒毛毡钢琴与晨雾微风'
-            },
-            {
-                name: '雨夜静谧 · 窗畔细雨与深邃琴音',
-                subtitle: '雨夜静谧 · 65 BPM 低通滤波雨幕与悠远琴音'
-            },
-            {
-                name: '圣诞前夜 · 暖炉微响与冬夜柔钢',
-                subtitle: '圣诞前夜 · 68 BPM 壁炉木柴微响与温暖和弦'
-            },
-            {
-                name: '海风舒展 · 夏日潮汐与远方海鸥',
-                subtitle: '海风舒展 · 75 BPM 流动海浪、海鸥回声与清爽钢琴'
-            }
-        ];
+let audioCtx = null;
+let noiseBusGain = null;
+let activeNoiseNodes = [];
+let mp3Player = null;
+let isMusicPlaying = false;
+let currentTrackIndex = 0;
 
-        function toggleMusicModal() {
-            document.getElementById('modal-music').classList.toggle('hidden');
-        }
+const TRACK_META = [
+    { name: '林间清晨 · 晨雾微风与露水钢琴', subtitle: '林间清晨 · 本地 MP3 音轨与环境白噪音' },
+    { name: '雨夜静谧 · 窗畔细雨与深邃琴音', subtitle: '雨夜静谧 · 本地 MP3 音轨与环境白噪音' },
+    { name: '圣诞前夜 · 暖炉微响与冬夜柔钢', subtitle: '圣诞前夜 · 本地 MP3 音轨与环境白噪音' },
+    { name: '海风舒展 · 夏日潮汐与远方海鸥', subtitle: '海风舒展 · 本地 MP3 音轨与环境白噪音' }
+];
 
-        function stopAudioEngine() {
-            activeNodes.forEach(node => {
-                try { node.stop?.(); node.disconnect?.(); } catch {}
-            });
-            activeNodes = [];
-            if (sequencerTimer) {
-                clearInterval(sequencerTimer);
-                sequencerTimer = null;
-            }
-            if (ambienceEventTimer) {
-                clearInterval(ambienceEventTimer);
-                ambienceEventTimer = null;
-            }
-        }
+function toggleMusicModal() {
+    document.getElementById('modal-music').classList.toggle('hidden');
+}
 
-        // 播放单个“柔绒毛毡钢琴 / 钢片琴微光”音符
-        function triggerFeltPianoNote(freq, startTime, duration, velocity = 0.045, options = {}) {
-            if (!audioCtx || !bgmBusGain) return;
+function stopNoiseLayer() {
+    activeNoiseNodes.forEach(node => {
+        try { node.stop?.(); node.disconnect?.(); } catch {}
+    });
+    activeNoiseNodes = [];
+}
 
-            const { cutoff = 520, isCelesta = false, pan = 0 } = options;
-            const oscFundamental = audioCtx.createOscillator();
-            const oscOvertone = audioCtx.createOscillator();
-            const noteFilter = audioCtx.createBiquadFilter();
-            const envGain = audioCtx.createGain();
+function startAmbientNoiseLayer() {
+    stopNoiseLayer();
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        noiseBusGain = audioCtx.createGain();
+        noiseBusGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
 
-            oscFundamental.type = 'sine';
-            oscFundamental.frequency.setValueAtTime(freq, startTime);
+    const bufferSize = audioCtx.sampleRate * 3;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    let lastOut = 0.0;
+    for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        output[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = output[i];
+        output[i] *= 0.18;
+    }
 
-            oscOvertone.type = isCelesta ? 'sine' : 'triangle';
-            oscOvertone.frequency.setValueAtTime(isCelesta ? freq * 3 : freq * 2, startTime);
+    const source = audioCtx.createBufferSource();
+    source.buffer = noiseBuffer;
+    source.loop = true;
 
-            const overtoneGain = audioCtx.createGain();
-            overtoneGain.gain.setValueAtTime(isCelesta ? 0.08 : 0.14, startTime);
+    const lpFilter = audioCtx.createBiquadFilter();
+    lpFilter.type = 'lowpass';
+    lpFilter.frequency.value = 620;
 
-            noteFilter.type = 'lowpass';
-            noteFilter.frequency.setValueAtTime(cutoff, startTime);
-            noteFilter.Q.setValueAtTime(0.7, startTime);
+    source.connect(lpFilter);
+    lpFilter.connect(noiseBusGain);
+    source.start();
+    activeNoiseNodes.push(source, lpFilter);
+}
 
-            const attack = isCelesta ? 0.08 : 0.35;
-            envGain.gain.setValueAtTime(0.0001, startTime);
-            envGain.gain.linearRampToValueAtTime(velocity, startTime + attack);
-            envGain.gain.exponentialRampToValueAtTime(velocity * 0.52, startTime + duration * 0.5);
-            envGain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+function startAudioTrack(index) {
+    if (!mp3Player) {
+        mp3Player = new Audio();
+        mp3Player.loop = true;
+    }
+    mp3Player.pause();
+    mp3Player.currentTime = 0;
+    mp3Player.src = MP3_TRACK_URLS[index] || MP3_TRACK_URLS[0];
+    mp3Player.play().catch(err => console.warn('音频播放提示:', err));
 
-            oscFundamental.connect(noteFilter);
-            oscOvertone.connect(overtoneGain);
-            overtoneGain.connect(noteFilter);
-            noteFilter.connect(envGain);
+    startAmbientNoiseLayer();
+    updateMixLevels();
+}
 
-            if (audioCtx.createStereoPanner && pan !== 0) {
-                const panner = audioCtx.createStereoPanner();
-                panner.pan.setValueAtTime(pan, startTime);
-                envGain.connect(panner);
-                panner.connect(bgmBusGain);
-            } else {
-                envGain.connect(bgmBusGain);
-            }
+function stopAudioEngine() {
+    if (mp3Player) {
+        mp3Player.pause();
+    }
+    stopNoiseLayer();
+}
 
-            oscFundamental.start(startTime);
-            oscOvertone.start(startTime);
-            oscFundamental.stop(startTime + duration + 0.12);
-            oscOvertone.stop(startTime + duration + 0.12);
-        }
+function updateMixLevels() {
+    const bgmVal = parseFloat(document.getElementById('bgm-volume')?.value ?? 0.55);
+    const noiseVal = parseFloat(document.getElementById('noise-volume')?.value ?? 0.45);
+    if (mp3Player) {
+        mp3Player.volume = Math.max(0, Math.min(1, bgmVal));
+    }
+    if (audioCtx && noiseBusGain) {
+        noiseBusGain.gain.setTargetAtTime(noiseVal, audioCtx.currentTime, 0.08);
+    }
+}
 
-        // 模拟远方混响柔化的海鸥鸣叫（仅用于“海风舒展”主题）
-        function triggerDistantSeagull(startTime) {
-            if (!audioCtx || !noiseBusGain) return;
-            const osc = audioCtx.createOscillator();
-            const filter = audioCtx.createBiquadFilter();
-            const gain = audioCtx.createGain();
+function selectTrack(index) {
+    currentTrackIndex = index;
+    document.querySelectorAll('.track-btn').forEach((btn, idx) => {
+        btn.className = idx === index
+            ? 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border-2 border-sage text-left transition'
+            : 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border border-clay/70 text-left transition';
+    });
+    document.getElementById('mobile-bar-track-name').textContent = TRACK_META[index].name;
+    document.getElementById('music-modal-subtitle').textContent = TRACK_META[index].subtitle;
+    if (isMusicPlaying) {
+        startAudioTrack(index);
+    }
+}
 
-            osc.type = 'sine';
-            // 海鸥滑音包络：轻柔上扬后缓缓滑落
-            osc.frequency.setValueAtTime(760, startTime);
-            osc.frequency.exponentialRampToValueAtTime(980, startTime + 0.22);
-            osc.frequency.exponentialRampToValueAtTime(620, startTime + 0.78);
+function togglePlayMusic() {
+    isMusicPlaying = !isMusicPlaying;
+    if (isMusicPlaying) {
+        startAudioTrack(currentTrackIndex);
+    } else {
+        stopAudioEngine();
+    }
+    updateMusicUI();
+}
 
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(920, startTime); // 陡峭高切滤除尖锐感
+function updateMusicUI() {
+    const iconName = isMusicPlaying ? 'pause' : 'play';
+    document.getElementById('mobile-bar-play-icon').setAttribute('data-lucide', iconName);
+    document.getElementById('modal-play-icon').setAttribute('data-lucide', iconName);
+    document.getElementById('modal-play-text').textContent = isMusicPlaying ? '暂停播放' : '开启无缝疗愈音景';
 
-            gain.gain.setValueAtTime(0.0001, startTime);
-            gain.gain.linearRampToValueAtTime(0.014, startTime + 0.18);
-            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.85);
-
-            osc.connect(filter);
-            filter.connect(gain);
-
-            if (audioCtx.createStereoPanner) {
-                const panner = audioCtx.createStereoPanner();
-                panner.pan.setValueAtTime((Math.random() * 1.2) - 0.6, startTime);
-                gain.connect(panner);
-                panner.connect(noiseBusGain);
-            } else {
-                gain.connect(noiseBusGain);
-            }
-
-            osc.start(startTime);
-            osc.stop(startTime + 0.9);
-        }
-
-        // 主题 1：林间清晨（70 BPM · 温暖模拟铺底 + 露水毛毡钢琴 + 晨雾树叶微风）
-        function startForestMorningScene() {
-            const padFreqs = [87.31, 130.81, 196.00, 220.00]; // Fmaj9 温暖基底
-            createPadLayer(padFreqs, 330, 0.22, 0.045);
-
-            // 70 BPM => 1拍 = 0.857s，4拍一小节 = 3428ms
-            const voicings = [
-                [174.61, 261.63, 329.63, 392.00], // Fmaj9
-                [146.83, 220.00, 261.63, 329.63], // Dm9
-                [196.00, 246.94, 293.66, 392.00], // G6
-                [130.81, 196.00, 246.94, 329.63]  // Cmaj9
-            ];
-            let bar = 0;
-            const playBar = () => {
-                if (!isMusicPlaying || !audioCtx) return;
-                const chord = voicings[bar % voicings.length];
-                const now = audioCtx.currentTime;
-                triggerFeltPianoNote(chord[0] * 0.5, now, 3.2, 0.036, { cutoff: 460 });
-                triggerFeltPianoNote(chord[1], now + 0.3, 3.3, 0.034, { cutoff: 540, pan: -0.25 });
-                triggerFeltPianoNote(chord[3], now + 1.4, 3.1, 0.030, { cutoff: 620, pan: 0.25 });
-                if (bar % 2 === 1) {
-                    triggerFeltPianoNote(chord[2] * 2, now + 2.3, 2.8, 0.018, { cutoff: 760, isCelesta: true, pan: 0.35 });
-                }
-                bar++;
-            };
-            playBar();
-            sequencerTimer = setInterval(playBar, 3428);
-
-            // 晨雾树叶微风白噪音
-            createFilteredNoiseLayer('pink', 640, 0.42, 0.08);
-        }
-
-        // 主题 2：雨夜静谧（65 BPM · 深邃雨幕白噪音 + 低动态夜曲毛毡钢琴）
-        function startQuietRainScene() {
-            const padFreqs = [73.42, 110.00, 164.81, 196.00]; // Dm9 静谧夜色铺底
-            createPadLayer(padFreqs, 270, 0.24, 0.035);
-
-            // 65 BPM => 1拍 = 0.923s，4拍一小节 = 3692ms
-            const voicings = [
-                [146.83, 220.00, 261.63, 329.63], // Dm9
-                [116.54, 174.61, 220.00, 261.63], // Bbmaj7
-                [130.81, 196.00, 246.94, 293.66], // Cmaj9
-                [110.00, 164.81, 196.00, 246.94]  // Am7
-            ];
-            let bar = 0;
-            const playBar = () => {
-                if (!isMusicPlaying || !audioCtx) return;
-                const chord = voicings[bar % voicings.length];
-                const now = audioCtx.currentTime;
-                triggerFeltPianoNote(chord[0] * 0.5, now, 3.5, 0.038, { cutoff: 420 });
-                triggerFeltPianoNote(chord[2], now + 0.5, 3.4, 0.030, { cutoff: 480, pan: -0.2 });
-                triggerFeltPianoNote(chord[3], now + 1.85, 3.2, 0.026, { cutoff: 520, pan: 0.2 });
-                bar++;
-            };
-            playBar();
-            sequencerTimer = setInterval(playBar, 3692);
-
-            // 平滑细雨声景（双重低通，绝无雷鸣或突兀声响）
-            createFilteredNoiseLayer('pink', 780, 0.52, 0.03);
-        }
-
-        // 主题 3：圣诞前夜（68 BPM · 壁炉木柴微响 + 温暖大调和弦与钢片琴星光）
-        function startChristmasEveScene() {
-            const padFreqs = [82.41, 130.81, 164.81, 246.94]; // Cmaj7 温暖包裹感
-            createPadLayer(padFreqs, 360, 0.23, 0.05);
-
-            // 68 BPM => 1拍 = 0.882s，4拍一小节 = 3529ms
-            const voicings = [
-                [130.81, 196.00, 246.94, 329.63], // Cmaj9
-                [174.61, 220.00, 261.63, 329.63], // Fmaj7
-                [146.83, 196.00, 246.94, 293.66], // Dm7/G
-                [130.81, 164.81, 196.00, 293.66]  // Cadd9
-            ];
-            let bar = 0;
-            const playBar = () => {
-                if (!isMusicPlaying || !audioCtx) return;
-                const chord = voicings[bar % voicings.length];
-                const now = audioCtx.currentTime;
-                triggerFeltPianoNote(chord[0] * 0.5, now, 3.3, 0.038, { cutoff: 480 });
-                triggerFeltPianoNote(chord[1], now + 0.2, 3.2, 0.034, { cutoff: 540 });
-                triggerFeltPianoNote(chord[2], now + 1.1, 3.0, 0.030, { cutoff: 560 });
-                // 柔和如窗外雪花微光的钢片琴泛音
-                triggerFeltPianoNote(chord[3] * 2, now + 2.0, 2.6, 0.017, { cutoff: 880, isCelesta: true, pan: 0.3 });
-                bar++;
-            };
-            playBar();
-            sequencerTimer = setInterval(playBar, 3529);
-
-            // 拟真壁炉温暖棕红底噪 + 极轻微柔和木柴微响
-            createFilteredNoiseLayer('brown', 380, 0.55, 0.06);
-            ambienceEventTimer = setInterval(() => {
-                if (!isMusicPlaying || !audioCtx || Math.random() > 0.55) return;
-                const now = audioCtx.currentTime;
-                const crackOsc = audioCtx.createOscillator();
-                const crackGain = audioCtx.createGain();
-                const crackFilter = audioCtx.createBiquadFilter();
-                crackOsc.type = 'triangle';
-                crackOsc.frequency.setValueAtTime(140 + Math.random() * 120, now);
-                crackFilter.type = 'bandpass';
-                crackFilter.frequency.value = 520;
-                crackGain.gain.setValueAtTime(0.0001, now);
-                crackGain.gain.linearRampToValueAtTime(0.012, now + 0.015);
-                crackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
-                crackOsc.connect(crackFilter);
-                crackFilter.connect(crackGain);
-                crackGain.connect(noiseBusGain);
-                crackOsc.start(now);
-                crackOsc.stop(now + 0.08);
-            }, 950);
-        }
-
-        // 主题 4：海风舒展（75 BPM · 左右潮汐海浪 + 混响海鸥回声 + 清爽流动钢琴）
-        function startSummerOceanScene() {
-            const padFreqs = [98.00, 146.83, 220.00, 246.94]; // Gmaj9 开阔明亮海岸铺底
-            createPadLayer(padFreqs, 420, 0.20, 0.06);
-
-            // 75 BPM => 1拍 = 0.8s，4拍一小节 = 3200ms
-            const voicings = [
-                [196.00, 246.94, 293.66, 369.99], // Gmaj7
-                [164.81, 246.94, 293.66, 392.00], // Em7
-                [130.81, 196.00, 246.94, 329.63], // Cmaj9
-                [146.83, 220.00, 261.63, 329.63]  // D6/9
-            ];
-            let bar = 0;
-            const playBar = () => {
-                if (!isMusicPlaying || !audioCtx) return;
-                const chord = voicings[bar % voicings.length];
-                const now = audioCtx.currentTime;
-                // 像海浪轻拍沙滩的流动琶音
-                triggerFeltPianoNote(chord[0] * 0.5, now, 3.0, 0.036, { cutoff: 580 });
-                triggerFeltPianoNote(chord[1], now + 0.4, 2.8, 0.034, { cutoff: 680, pan: -0.3 });
-                triggerFeltPianoNote(chord[2], now + 0.8, 2.8, 0.032, { cutoff: 720, pan: 0.0 });
-                triggerFeltPianoNote(chord[3], now + 1.2, 3.0, 0.030, { cutoff: 760, pan: 0.3 });
-                if (bar % 2 === 0) {
-                    triggerFeltPianoNote(chord[2] * 2, now + 2.1, 2.5, 0.018, { cutoff: 940, isCelesta: true, pan: -0.25 });
-                }
-                bar++;
-            };
-            playBar();
-            sequencerTimer = setInterval(playBar, 3200);
-
-            // 潮汐海浪呼吸滤波噪声（0.11 Hz 约 9 秒一次海浪涨落）
-            createFilteredNoiseLayer('pink', 680, 0.50, 0.11, true);
-
-            // 远处温柔海鸥回声（每隔 9-13 秒轻柔掠过一次）
-            setTimeout(() => { if (isMusicPlaying && currentTrackIndex === 3) triggerDistantSeagull(audioCtx.currentTime); }, 1800);
-            ambienceEventTimer = setInterval(() => {
-                if (!isMusicPlaying || !audioCtx || currentTrackIndex !== 3) return;
-                triggerDistantSeagull(audioCtx.currentTime);
-                if (Math.random() > 0.5) {
-                    triggerDistantSeagull(audioCtx.currentTime + 1.35);
-                }
-            }, 10500);
-        }
-
-        // 通用温暖模拟铺底生成器
-        function createPadLayer(freqs, cutoffFreq, gainLevel, lfoRate) {
-            const padFilter = audioCtx.createBiquadFilter();
-            padFilter.type = 'lowpass';
-            padFilter.frequency.value = cutoffFreq;
-
-            const padMaster = audioCtx.createGain();
-            padMaster.gain.value = gainLevel;
-
-            const driftLfo = audioCtx.createOscillator();
-            const driftGain = audioCtx.createGain();
-            driftLfo.frequency.value = lfoRate;
-            driftGain.gain.value = 60;
-            driftLfo.connect(driftGain);
-            driftGain.connect(padFilter.frequency);
-            driftLfo.start();
-            activeNodes.push(driftLfo, driftGain);
-
-            freqs.forEach((f, idx) => {
-                const osc = audioCtx.createOscillator();
-                osc.type = idx === 0 ? 'sine' : 'triangle';
-                osc.frequency.value = f;
-                osc.detune.value = (idx % 2 === 0 ? 1 : -1) * 4;
-                osc.connect(padFilter);
-                osc.start();
-                activeNodes.push(osc);
-            });
-
-            padFilter.connect(padMaster);
-            padMaster.connect(bgmBusGain);
-            activeNodes.push(padFilter, padMaster);
-        }
-
-        // 通用低通滤波自然声景生成器（支持海浪潮汐呼吸调制）
-        function createFilteredNoiseLayer(type = 'pink', cutoff = 700, level = 0.45, waveRate = 0.08, isOceanTide = false) {
-            const bufferSize = audioCtx.sampleRate * 4;
-            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const output = noiseBuffer.getChannelData(0);
-
-            if (type === 'pink') {
-                let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-                for (let i = 0; i < bufferSize; i++) {
-                    const white = Math.random() * 2 - 1;
-                    b0 = 0.99886 * b0 + white * 0.0555179;
-                    b1 = 0.99332 * b1 + white * 0.0750759;
-                    b2 = 0.96900 * b2 + white * 0.1538520;
-                    b3 = 0.86650 * b3 + white * 0.3104856;
-                    b4 = 0.55000 * b4 + white * 0.5329522;
-                    b5 = -0.7616 * b5 - white * 0.0168980;
-                    output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.036;
-                    b6 = white * 0.115926;
-                }
-            } else {
-                let lastOut = 0.0;
-                for (let i = 0; i < bufferSize; i++) {
-                    const white = Math.random() * 2 - 1;
-                    output[i] = (lastOut + (0.02 * white)) / 1.02;
-                    lastOut = output[i];
-                    output[i] *= 0.24;
-                }
-            }
-
-            const source = audioCtx.createBufferSource();
-            source.buffer = noiseBuffer;
-            source.loop = true;
-
-            const lp1 = audioCtx.createBiquadFilter();
-            lp1.type = 'lowpass';
-            lp1.frequency.value = cutoff;
-
-            const lp2 = audioCtx.createBiquadFilter();
-            lp2.type = 'lowpass';
-            lp2.frequency.value = cutoff * 1.25;
-
-            const layerGain = audioCtx.createGain();
-            layerGain.gain.value = level;
-
-            // 如果是海岸潮汐，添加缓慢的潮水涨落滤波与声场微摆
-            if (isOceanTide) {
-                const tideLfo = audioCtx.createOscillator();
-                const tideFilterDepth = audioCtx.createGain();
-                tideLfo.frequency.value = waveRate;
-                tideFilterDepth.gain.value = 260;
-                tideLfo.connect(tideFilterDepth);
-                tideFilterDepth.connect(lp1.frequency);
-                tideLfo.start();
-                activeNodes.push(tideLfo, tideFilterDepth);
-            }
-
-            source.connect(lp1);
-            lp1.connect(lp2);
-            lp2.connect(layerGain);
-            layerGain.connect(noiseBusGain);
-            source.start();
-            activeNodes.push(source, lp1, lp2, layerGain);
-        }
-
-        function startAudioTrack(index) {
-            stopAudioEngine();
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                masterGain = audioCtx.createGain();
-                masterGain.gain.value = 0.92;
-                masterGain.connect(audioCtx.destination);
-
-                bgmBusGain = audioCtx.createGain();
-                bgmBusGain.connect(masterGain);
-
-                noiseBusGain = audioCtx.createGain();
-                noiseBusGain.connect(masterGain);
-            }
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            if (index === 0) startForestMorningScene();
-            else if (index === 1) startQuietRainScene();
-            else if (index === 2) startChristmasEveScene();
-            else if (index === 3) startSummerOceanScene();
-
-            updateMixLevels();
-        }
-
-        function updateMixLevels() {
-            if (!audioCtx || !bgmBusGain || !noiseBusGain) return;
-            const bgmVal = parseFloat(document.getElementById('bgm-volume').value);
-            const noiseVal = parseFloat(document.getElementById('noise-volume').value);
-            bgmBusGain.gain.setTargetAtTime(bgmVal, audioCtx.currentTime, 0.08);
-            noiseBusGain.gain.setTargetAtTime(noiseVal, audioCtx.currentTime, 0.08);
-        }
-
-        function selectTrack(index) {
-            currentTrackIndex = index;
-            document.querySelectorAll('.track-btn').forEach((btn, idx) => {
-                btn.className = idx === index
-                    ? 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border-2 border-sage text-left transition'
-                    : 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border border-clay/70 text-left transition';
-            });
-            document.getElementById('mobile-bar-track-name').textContent = TRACK_META[index].name;
-            document.getElementById('music-modal-subtitle').textContent = TRACK_META[index].subtitle;
-            if (isMusicPlaying) {
-                startAudioTrack(index);
-            }
-        }
-
-        function togglePlayMusic() {
-            isMusicPlaying = !isMusicPlaying;
-            if (isMusicPlaying) {
-                startAudioTrack(currentTrackIndex);
-            } else {
-                stopAudioEngine();
-            }
-            updateMusicUI();
-        }
-
-        function updateMusicUI() {
-            const iconName = isMusicPlaying ? 'pause' : 'play';
-            document.getElementById('mobile-bar-play-icon').setAttribute('data-lucide', iconName);
-            document.getElementById('modal-play-icon').setAttribute('data-lucide', iconName);
-            document.getElementById('modal-play-text').textContent = isMusicPlaying ? '暂停播放' : '开启无缝疗愈音景';
-
-            const headerDot = document.getElementById('header-music-dot');
-            const mobileBar = document.getElementById('music-mini-mobile');
-            if (isMusicPlaying) {
-                headerDot.className = 'w-2 h-2 rounded-full bg-sage animate-ping';
-                mobileBar.classList.remove('hidden');
-            } else {
-                headerDot.className = 'w-2 h-2 rounded-full bg-muted';
-                mobileBar.classList.add('hidden');
-            }
-            safeCreateIcons();
-        }
+    const headerDot = document.getElementById('header-music-dot');
+    const mobileBar = document.getElementById('music-mini-mobile');
+    if (isMusicPlaying) {
+        headerDot.className = 'w-2 h-2 rounded-full bg-sage animate-ping';
+        mobileBar.classList.remove('hidden');
+    } else {
+        headerDot.className = 'w-2 h-2 rounded-full bg-muted';
+        mobileBar.classList.add('hidden');
+    }
+    safeCreateIcons();
+}
 
         // ==================== 8. 浅色弥散风格呼吸正念引导计时器（三阶段治愈色彩流转） ====================
         let breathInterval = null;
