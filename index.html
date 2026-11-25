@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>普拉提字典 · 温柔觉察与身心流韵</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts: Noto Serif SC & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- 引入 Lucide 图标库 -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        oatmeal: '#FAF7F2',
+                        sand: '#F2ECE1',
+                        clay: '#E6DDD0',
+                        sage: '#8C9E8C',
+                        sageDark: '#687A68',
+                        terracotta: '#C88D74',
+                        charcoal: '#2F2D2B',
+                        muted: '#78736D',
+                        mistBlue: '#8FA8B8',
+                        warmApricot: '#D9A78B',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAF7F2;
+            color: #2F2D2B;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .font-serif-title {
+            font-family: 'Noto Serif SC', serif;
+        }
+        /* 隐藏横向滚动条 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* 浅色弥散呼吸光晕 */
+        .diffuse-aura-container {
+            background: radial-gradient(circle at 20% 20%, rgba(234, 239, 233, 0.85) 0%, transparent 55%),
+                        radial-gradient(circle at 80% 30%, rgba(245, 235, 230, 0.8) 0%, transparent 55%),
+                        radial-gradient(circle at 50% 85%, rgba(232, 239, 244, 0.85) 0%, transparent 60%),
+                        #FCFBF8;
+        }
+        .breath-blob {
+            filter: blur(26px);
+            transition: transform 3.8s cubic-bezier(0.37, 0, 0.63, 1), background-color 2.2s ease, opacity 2s ease;
+        }
+        .breath-core-ring {
+            transition: transform 3.8s cubic-bezier(0.37, 0, 0.63, 1), border-color 2s ease, box-shadow 2s ease;
+        }
+        /* 卡片与按钮精致微交互 */
+        .pilates-card {
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+        .pilates-card:active {
+            transform: scale(0.985);
+        }
+        @media (min-width: 768px) {
+            .pilates-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 18px 36px -12px rgba(47, 45, 43, 0.07);
+                border-color: rgba(140, 158, 140, 0.45);
+            }
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .view-enter {
+            animation: fadeSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-sage/25 selection:text-charcoal">
+
+    <!-- 顶部品牌导航栏 -->
+    <header class="sticky top-0 z-30 bg-oatmeal/88 backdrop-blur-md border-b border-clay/50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+            <!-- 左侧 Logo -->
+            <div onclick="navigateTo('home')" class="flex items-center gap-2.5 cursor-pointer group">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sage/90 group-hover:bg-sage flex items-center justify-center text-white shadow-2xs transition">
+                    <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif-title text-base sm:text-lg font-bold tracking-tight text-charcoal leading-none">普拉提字典</h1>
+                    <p class="text-[10px] text-muted tracking-widest mt-0.5">MINDFUL PILATES FLOW</p>
+                </div>
+            </div>
+
+            <!-- 桌面端主导航 -->
+            <nav class="hidden md:flex items-center gap-1 bg-sand/75 p-1 rounded-2xl border border-clay/50">
+                <button onclick="navigateTo('home')" id="nav-desktop-home" class="px-4 py-1.5 rounded-xl text-sm font-medium transition bg-white text-charcoal shadow-2xs">首页</button>
+                <button onclick="navigateTo('catalog')" id="nav-desktop-catalog" class="px-4 py-1.5 rounded-xl text-sm font-medium transition text-muted hover:text-charcoal">体式目录</button>
+                <button onclick="navigateTo('mindful')" id="nav-desktop-mindful" class="px-4 py-1.5 rounded-xl text-sm font-medium transition text-muted hover:text-charcoal">呼吸正念</button>
+                <button onclick="openAiModal()" class="px-4 py-1.5 rounded-xl text-sm font-medium transition text-sageDark hover:bg-white/60 flex items-center gap-1.5">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI 伴练
+                </button>
+            </nav>
+
+            <!-- 右侧快捷音疗与新增动作按钮 -->
+            <div class="flex items-center gap-2">
+                <!-- 疗愈音疗按钮 -->
+                <button onclick="toggleMusicModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sand/90 hover:bg-clay/50 border border-clay/60 text-xs font-medium text-charcoal transition">
+                    <span id="header-music-dot" class="w-2 h-2 rounded-full bg-muted"></span>
+                    <i data-lucide="music" class="w-3.5 h-3.5 text-sageDark"></i>
+                    <span class="hidden sm:inline" id="header-music-label">疗愈音景</span>
+                </button>
+                <!-- 桌面端快速添加按钮 -->
+                <button onclick="openAddMoveModal()" class="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-charcoal text-oatmeal text-xs font-medium hover:bg-charcoal/90 transition shadow-2xs">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> 随手记体式
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 pt-5 pb-28 md:pb-14">
+
+        <!-- ==================== 1. 主页视图 ==================== -->
+        <section id="view-home" class="view-enter space-y-8 sm:space-y-10">
+            <!-- 英雄横幅与智能口语搜索 -->
+            <div class="rounded-3xl bg-gradient-to-br from-[#F6F1E8] via-[#EFE7DA] to-[#E8DFD1] p-6 sm:p-10 border border-clay/60 relative overflow-hidden">
+                <div class="max-w-xl relative z-10 space-y-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 text-sageDark text-xs font-medium border border-sage/20">
+                        <i data-lucide="leaf" class="w-3.5 h-3.5"></i> 呼吸 · 觉察 · 温柔舒展
+                    </span>
+                    <h2 class="font-serif-title text-2xl sm:text-4xl font-bold text-charcoal leading-snug">
+                        在呼吸的起伏里，<br class="hidden sm:inline">温柔唤醒身体深处的力量。
+                    </h2>
+                    <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                        不必追求剧烈的汗水，顺着身体的感受寻找当下的练习。支持按日常部位与身体状态搜索，随时留存属于你的实拍蜕变与练习手记。
+                    </p>
+
+                    <!-- 搜索框 -->
+                    <div class="pt-1">
+                        <div class="flex items-center bg-white/95 rounded-2xl p-1.5 shadow-xs border border-clay/70 focus-within:border-sage transition">
+                            <i data-lucide="search" class="w-4 h-4 text-muted ml-3 shrink-0"></i>
+                            <input type="text" id="home-search-input" onkeydown="if(event.key==='Enter') handleHomeSearch()"
+                                placeholder="试试搜：肚子、脖子酸、假胯宽、瘦腿、腰背..."
+                                class="w-full px-3 py-2 text-sm bg-transparent focus:outline-none text-charcoal placeholder:text-muted/70">
+                            <button onclick="handleHomeSearch()" class="px-4 py-2 rounded-xl bg-sage text-white text-xs sm:text-sm font-medium hover:bg-sageDark transition shrink-0">
+                                寻找体式
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 快捷热门标签 -->
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        <span class="text-[11px] text-muted">此刻想照顾：</span>
+                        <button onclick="quickSearchKeyword('肚子')" class="px-2.5 py-1 rounded-lg bg-white/75 hover:bg-white text-[11px] text-charcoal border border-clay/50 transition">收紧小肚子</button>
+                        <button onclick="quickSearchKeyword('脖子')" class="px-2.5 py-1 rounded-lg bg-white/75 hover:bg-white text-[11px] text-charcoal border border-clay/50 transition">舒缓肩颈僵硬</button>
+                        <button onclick="quickSearchKeyword('屁股')" class="px-2.5 py-1 rounded-lg bg-white/75 hover:bg-white text-[11px] text-charcoal border border-clay/50 transition">改善假胯宽</button>
+                        <button onclick="quickSearchKeyword('腿')" class="px-2.5 py-1 rounded-lg bg-white/75 hover:bg-white text-[11px] text-charcoal border border-clay/50 transition">拉长腿部线条</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 四大核心部位系列（手机竖屏 2x2 宫格，桌面端 4 列） -->
+            <div class="space-y-3.5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-serif-title text-lg sm:text-xl font-bold text-charcoal">循着身体部位探索</h3>
+                        <p class="text-xs text-muted mt-0.5">从局部放松到深层稳定，倾听每一寸肌群的回应</p>
+                    </div>
+                    <button onclick="navigateTo('catalog', '全部')" class="text-xs font-medium text-sageDark hover:underline flex items-center gap-1">
+                        浏览全部 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <!-- 卡片1：肩颈系列 -->
+                    <div onclick="navigateTo('catalog', '肩颈系列')" class="pilates-card cursor-pointer rounded-2xl bg-white p-4 sm:p-5 border border-clay/60 flex flex-col justify-between space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-[#EAEFE9] text-sageDark flex items-center justify-center">
+                            <i data-lucide="feather" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-serif-title font-bold text-base sm:text-lg text-charcoal">肩颈系列</h4>
+                            <p class="text-[11px] text-muted mt-1 line-clamp-2">卸下双肩沉重感，温柔打开胸廓与上背</p>
+                            <div class="mt-3 pt-2.5 border-t border-sand flex items-center justify-between text-[11px] font-medium text-sageDark">
+                                <span id="count-shoulder">舒展上背</span>
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片2：臀髋系列 -->
+                    <div onclick="navigateTo('catalog', '臀髋系列')" class="pilates-card cursor-pointer rounded-2xl bg-white p-4 sm:p-5 border border-clay/60 flex flex-col justify-between space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-[#F5EBE6] text-terracotta flex items-center justify-center">
+                            <i data-lucide="compass" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-serif-title font-bold text-base sm:text-lg text-charcoal">臀髋系列</h4>
+                            <p class="text-[11px] text-muted mt-1 line-clamp-2">唤醒沉睡的臀肌力量，释放久坐髋部紧张</p>
+                            <div class="mt-3 pt-2.5 border-t border-sand flex items-center justify-between text-[11px] font-medium text-terracotta">
+                                <span id="count-hip">骨盆稳定</span>
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片3：下肢系列 -->
+                    <div onclick="navigateTo('catalog', '下肢系列')" class="pilates-card cursor-pointer rounded-2xl bg-white p-4 sm:p-5 border border-clay/60 flex flex-col justify-between space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-[#EFECE6] text-[#8C7A5B] flex items-center justify-center">
+                            <i data-lucide="footprints" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-serif-title font-bold text-base sm:text-lg text-charcoal">下肢系列</h4>
+                            <p class="text-[11px] text-muted mt-1 line-clamp-2">延展紧绷腿部后侧，雕塑轻盈修长的下肢</p>
+                            <div class="mt-3 pt-2.5 border-t border-sand flex items-center justify-between text-[11px] font-medium text-[#8C7A5B]">
+                                <span id="count-leg">轻盈延展</span>
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片4：全身核心系列 -->
+                    <div onclick="navigateTo('catalog', '全身核心系列')" class="pilates-card cursor-pointer rounded-2xl bg-white p-4 sm:p-5 border border-clay/60 flex flex-col justify-between space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-[#E8ECEF] text-[#5B7285] flex items-center justify-center">
+                            <i data-lucide="sun" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-serif-title font-bold text-base sm:text-lg text-charcoal">全身核心系列</h4>
+                            <p class="text-[11px] text-muted mt-1 line-clamp-2">连接腹部深层与呼吸，找回由内而外的支撑</p>
+                            <div class="mt-3 pt-2.5 border-t border-sand flex items-center justify-between text-[11px] font-medium text-[#5B7285]">
+                                <span id="count-core">深层凝聚</span>
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 功能快捷入口卡片：AI 伴练 & 呼吸正念 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- AI 伴练卡片 -->
+                <div onclick="openAiModal()" class="pilates-card cursor-pointer rounded-2xl bg-white p-5 border border-clay/60 flex items-center justify-between gap-4">
+                    <div class="space-y-1.5">
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-sage/15 text-sageDark text-[11px] font-medium">温柔伴练</span>
+                        <h4 class="font-serif-title font-bold text-base sm:text-lg text-charcoal">AI 普拉提身心向导</h4>
+                        <p class="text-xs text-muted leading-relaxed">告诉它你今天哪里觉得紧绷或疲惫，为你定制温和舒缓的练习编排与发力小贴士。</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-sage text-white flex items-center justify-center shrink-0 shadow-2xs">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- 呼吸与正念卡片 -->
+                <div onclick="navigateTo('mindful')" class="pilates-card cursor-pointer rounded-2xl bg-white p-5 border border-clay/60 flex items-center justify-between gap-4">
+                    <div class="space-y-1.5">
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-terracotta/15 text-terracotta text-[11px] font-medium">静谧时刻</span>
+                        <h4 class="font-serif-title font-bold text-base sm:text-lg text-charcoal">横向肋间呼吸与正念室</h4>
+                        <p class="text-xs text-muted leading-relaxed">在浅色弥散光晕的呼吸节奏中安顿思绪，伴随毛毡钢琴与细雨白噪音找回平静。</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-terracotta text-white flex items-center justify-center shrink-0 shadow-2xs">
+                        <i data-lucide="wind" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 2. 目录页视图 ==================== -->
+        <section id="view-catalog" class="hidden view-enter space-y-5">
+            <!-- 顶部标题与智能搜索 -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="font-serif-title text-xl sm:text-2xl font-bold text-charcoal">普拉提体式灵感库</h2>
+                    <p class="text-xs text-muted mt-0.5">支持输入部位或日常口语（如“肚子”“腰酸”“富贵包”）智能匹配</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-grow sm:w-72">
+                        <i data-lucide="search" class="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="catalog-search-input" oninput="renderCatalog()"
+                            placeholder="搜肚子、肩颈、大腿内侧、骨盆..."
+                            class="w-full pl-9 pr-8 py-2 rounded-xl bg-white border border-clay/80 text-xs sm:text-sm focus:outline-none focus:border-sage">
+                        <button onclick="clearCatalogSearch()" id="btn-clear-search" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-charcoal">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <button onclick="openAddMoveModal()" class="px-3.5 py-2 rounded-xl bg-charcoal text-oatmeal text-xs font-medium shrink-0 flex items-center gap-1 hover:bg-charcoal/90 transition">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> 记录
+                    </button>
+                </div>
+            </div>
+
+            <!-- 智能搜索联想提示条 -->
+            <div id="smart-search-banner" class="hidden px-4 py-2.5 rounded-2xl bg-sage/12 border border-sage/25 text-xs text-sageDark flex items-center justify-between">
+                <span id="smart-search-hint-text">已为你智能关联相关部位的体式</span>
+                <button onclick="resetCatalogFilters()" class="underline font-medium">查看全部</button>
+            </div>
+
+            <!-- 分类横向轻扫胶囊栏 -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1" id="category-tabs">
+                <button onclick="setCategoryFilter('全部')" data-cat="全部" class="cat-pill px-4 py-2 rounded-full text-xs font-medium bg-charcoal text-oatmeal shrink-0 transition">全部系列</button>
+                <button onclick="setCategoryFilter('肩颈系列')" data-cat="肩颈系列" class="cat-pill px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-clay/70 shrink-0 transition">肩颈系列</button>
+                <button onclick="setCategoryFilter('臀髋系列')" data-cat="臀髋系列" class="cat-pill px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-clay/70 shrink-0 transition">臀髋系列</button>
+                <button onclick="setCategoryFilter('下肢系列')" data-cat="下肢系列" class="cat-pill px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-clay/70 shrink-0 transition">下肢系列</button>
+                <button onclick="setCategoryFilter('全身核心系列')" data-cat="全身核心系列" class="cat-pill px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-clay/70 shrink-0 transition">全身核心系列</button>
+            </div>
+
+            <!-- 动作网格 -->
+            <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- 由 JS 动态渲染 -->
+            </div>
+
+            <!-- 空状态 -->
+            <div id="catalog-empty" class="hidden text-center py-14 bg-white rounded-3xl border border-clay/60 space-y-3">
+                <p class="text-sm text-muted">暂时没有找到完全匹配的体式，试试其他身体部位词吧</p>
+                <div class="flex justify-center gap-2">
+                    <button onclick="quickSearchKeyword('肚子')" class="px-3 py-1.5 rounded-xl bg-oatmeal text-xs text-charcoal border border-clay">腹部训练</button>
+                    <button onclick="quickSearchKeyword('肩颈')" class="px-3 py-1.5 rounded-xl bg-oatmeal text-xs text-charcoal border border-clay">肩颈舒展</button>
+                    <button onclick="resetCatalogFilters()" class="px-3 py-1.5 rounded-xl bg-sand text-xs font-medium text-charcoal">重置筛选</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 3. 动作详情页视图 ==================== -->
+        <section id="view-detail" class="hidden view-enter space-y-5">
+            <!-- 返回导航 -->
+            <div class="flex items-center justify-between">
+                <button onclick="navigateTo('catalog')" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-muted hover:text-charcoal transition">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回体式目录
+                </button>
+                <button onclick="askAiAboutCurrentMove()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-sage/15 text-sageDark text-xs font-medium hover:bg-sage/25 transition">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 请教 AI 发力细节
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-clay/60 overflow-hidden shadow-2xs">
+                <div class="grid grid-cols-1 lg:grid-cols-12">
+                    <!-- 左侧图片与实拍上传区域 -->
+                    <div class="lg:col-span-5 bg-sand/50 p-5 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-clay/60 space-y-4">
+                        <div class="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-white border border-clay/60 shadow-2xs">
+                            <img id="detail-image" src="" alt="体式示范" class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <span id="detail-photo-status" class="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-white border border-clay text-muted">柔光示意图</span>
+                                <button id="btn-reset-photo" onclick="resetCurrentMovePhoto()" class="hidden text-[11px] text-terracotta hover:underline">恢复默认图示</button>
+                            </div>
+
+                            <!-- 拍照与上传按钮 -->
+                            <label class="w-full cursor-pointer flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-charcoal text-oatmeal text-xs sm:text-sm font-medium hover:bg-charcoal/90 transition shadow-2xs">
+                                <i data-lucide="camera" class="w-4 h-4"></i>
+                                <span>拍摄或上传我的练习实拍</span>
+                                <input type="file" accept="image/*" class="hidden" onchange="handleDetailPhotoUpload(event)">
+                            </label>
+                            <p class="text-[11px] text-muted text-center">照片仅安心留存在你的设备本地，随时打开都能重温</p>
+                        </div>
+                    </div>
+
+                    <!-- 右侧动作解剖要点与步骤 -->
+                    <div class="lg:col-span-7 p-5 sm:p-8 space-y-6">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-medium text-sageDark mb-1.5">
+                                <span id="detail-category" class="px-2.5 py-0.5 rounded-md bg-sage/15">肩颈系列</span>
+                                <span>·</span>
+                                <span id="detail-difficulty" class="text-muted">温和入门</span>
+                            </div>
+                            <h2 id="detail-title" class="font-serif-title text-2xl sm:text-3xl font-bold text-charcoal">动作名称</h2>
+                            <p id="detail-en-title" class="text-xs text-muted tracking-wider uppercase mt-0.5">PILATES MOVEMENT</p>
+                        </div>
+
+                        <!-- 锻炼部位 & 放松部位 双卡片 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-3.5 rounded-2xl bg-[#FAF5F2] border border-terracotta/25">
+                                <div class="flex items-center gap-1.5 text-xs font-semibold text-terracotta mb-1">
+                                    <i data-lucide="flame" class="w-3.5 h-3.5"></i> 唤醒与强化部位
+                                </div>
+                                <p id="detail-strengthen" class="text-xs sm:text-sm text-charcoal leading-relaxed">深层核心肌群</p>
+                            </div>
+                            <div class="p-3.5 rounded-2xl bg-[#F2F6F2] border border-sage/30">
+                                <div class="flex items-center gap-1.5 text-xs font-semibold text-sageDark mb-1">
+                                    <i data-lucide="feather" class="w-3.5 h-3.5"></i> 舒展与放松部位
+                                </div>
+                                <p id="detail-relax" class="text-xs sm:text-sm text-charcoal leading-relaxed">紧张筋膜与代偿肌群</p>
+                            </div>
+                        </div>
+
+                        <!-- 核心发力细节提示 -->
+                        <div class="p-4 rounded-2xl bg-sand/65 border border-clay/60 space-y-1.5">
+                            <div class="flex items-center gap-1.5 text-xs font-bold text-charcoal">
+                                <i data-lucide="target" class="w-4 h-4 text-sageDark"></i> 觉察细节与防代偿提示
+                            </div>
+                            <p id="detail-cues" class="text-xs sm:text-sm text-charcoal/90 leading-relaxed"></p>
+                        </div>
+
+                        <!-- 标准动作步骤 -->
+                        <div class="space-y-2.5">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-muted">呼吸与流动步骤</h3>
+                            <ul id="detail-steps" class="space-y-2.5 text-xs sm:text-sm text-charcoal leading-relaxed">
+                                <!-- JS 动态填充 -->
+                            </ul>
+                        </div>
+
+                        <!-- 私人练习笔记 -->
+                        <div class="pt-4 border-t border-sand space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label for="detail-notes" class="text-xs font-semibold text-charcoal">我的练习随笔与身体感受</label>
+                                <span id="notes-save-hint" class="text-[11px] text-sageDark opacity-0 transition">已悄悄为你记下 ✓</span>
+                            </div>
+                            <textarea id="detail-notes" rows="2" onblur="saveCurrentMoveNotes()"
+                                placeholder="写下此刻练习时呼吸是否顺畅、哪一侧肌肉更有感觉..."
+                                class="w-full p-3 rounded-xl bg-oatmeal border border-clay/80 text-xs sm:text-sm focus:outline-none focus:border-sage"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 4. 呼吸与正念训练室（浅色弥散风格） ==================== -->
+        <section id="view-mindful" class="hidden view-enter space-y-6">
+            <div class="text-center max-w-lg mx-auto space-y-2">
+                <span class="inline-block px-3 py-1 rounded-full bg-sage/15 text-sageDark text-xs font-medium">LATERAL THORACIC BREATHING</span>
+                <h2 class="font-serif-title text-2xl sm:text-3xl font-bold text-charcoal">横向肋间呼吸与正念光晕</h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">跟随柔和色彩的流转调整呼吸：吸气时肋骨如云朵般向两侧舒展，呼气时让所有紧绷随气息缓缓沉降。</p>
+            </div>
+
+            <!-- 浅色弥散风格呼吸引导仪 -->
+            <div id="breath-diffuse-card" class="max-w-md mx-auto rounded-3xl diffuse-aura-container p-7 sm:p-9 border border-clay/60 text-center space-y-6 shadow-xs relative overflow-hidden">
+                <!-- 弥散动态色彩光团 -->
+                <div class="relative w-56 h-56 mx-auto flex items-center justify-center">
+                    <div id="breath-blob-1" class="breath-blob absolute w-40 h-40 rounded-full bg-[#B9D1BE]/65 -translate-x-4 -translate-y-3"></div>
+                    <div id="breath-blob-2" class="breath-blob absolute w-40 h-40 rounded-full bg-[#DCE6EE]/70 translate-x-4 translate-y-3"></div>
+                    
+                    <!-- 中心磨砂玻璃呼吸圆环 -->
+                    <div id="breath-core-ring" class="breath-core-ring relative z-10 w-36 h-36 rounded-full bg-white/80 backdrop-blur-md border-2 border-[#9EB8A4]/60 shadow-sm flex flex-col items-center justify-center px-3">
+                        <span id="breath-phase-badge" class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#EAEFE9] text-sageDark mb-1">静心准备</span>
+                        <span id="breath-phase-text" class="font-serif-title text-lg font-bold text-charcoal">轻柔安坐</span>
+                        <span id="breath-timer-text" class="text-[11px] text-muted mt-1">4秒吸 · 2秒停 · 6秒呼</span>
+                    </div>
+                </div>
+
+                <!-- 三阶段治愈色彩指示灯 -->
+                <div class="flex items-center justify-center gap-3 text-[11px]">
+                    <span id="pill-inhale" class="px-2.5 py-1 rounded-full bg-white/70 text-muted border border-clay/50 transition">● 吸气 · 晨雾绿</span>
+                    <span id="pill-hold" class="px-2.5 py-1 rounded-full bg-white/70 text-muted border border-clay/50 transition">● 屏息 · 暖阳杏</span>
+                    <span id="pill-exhale" class="px-2.5 py-1 rounded-full bg-white/70 text-muted border border-clay/50 transition">● 呼气 · 海盐蓝</span>
+                </div>
+
+                <div class="space-y-3 relative z-10">
+                    <p id="breath-guide-detail" class="text-xs text-charcoal/85 leading-relaxed min-h-[2.75rem]">
+                        将双手轻放在下肋骨两侧，感受鼻吸时胸廓向左右温柔撑开，口呼时腹部如丝绸般向内收拢。
+                    </p>
+                    <button id="btn-toggle-breath" onclick="toggleBreathingGuide()" class="w-full py-3 rounded-2xl bg-sage text-white text-sm font-medium hover:bg-sageDark transition shadow-xs">
+                        开启呼吸光晕引导
+                    </button>
+                </div>
+            </div>
+
+            <!-- 练习前身体正念扫描卡片 -->
+            <div class="max-w-2xl mx-auto rounded-3xl bg-sand/65 p-5 sm:p-6 border border-clay/60 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-serif-title text-base sm:text-lg font-bold text-charcoal">练习前 3 分钟温柔身体扫描</h3>
+                    <button onclick="toggleMusicModal()" class="text-xs text-sageDark font-medium hover:underline">开启毛毡钢琴与白噪音 →</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div class="p-3.5 rounded-2xl bg-white/90 border border-clay/50 space-y-1">
+                        <span class="font-bold text-sageDark">01 · 颅颈轻悬</span>
+                        <p class="text-muted leading-relaxed">想象头顶被一缕微风轻轻托起，下巴微收，让双肩自然远离耳朵。</p>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-white/90 border border-clay/50 space-y-1">
+                        <span class="font-bold text-terracotta">02 · 肋骨融化</span>
+                        <p class="text-muted leading-relaxed">呼气时让前侧肋骨温柔地向骨盆方向下沉，给上背部留出呼吸空间。</p>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-white/90 border border-clay/50 space-y-1">
+                        <span class="font-bold text-[#6A8596]">03 · 骨盆安放</span>
+                        <p class="text-muted leading-relaxed">仰卧时感受骶骨平稳贴实垫面，像躺在温热的沙滩上一样安稳。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 移动端底部单手拇指导航栏 & 迷你音乐条 -->
+    <div class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-oatmeal/95 backdrop-blur-md border-t border-clay/60 pb-[env(safe-area-inset-bottom)]">
+        <!-- 播放中浮现的迷你音疗条 -->
+        <div id="music-mini-mobile" onclick="toggleMusicModal()" class="hidden px-4 py-2 bg-sand border-b border-clay/60 flex items-center justify-between text-xs cursor-pointer">
+            <div class="flex items-center gap-2 truncate">
+                <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
+                <span id="mobile-bar-track-name" class="font-medium text-charcoal truncate">柔绒钢琴与林间细雨 · 疗愈混音</span>
+            </div>
+            <button onclick="event.stopPropagation(); togglePlayMusic()" class="p-1.5 rounded-lg bg-white text-charcoal">
+                <i id="mobile-bar-play-icon" data-lucide="pause" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+
+        <nav class="grid grid-cols-4 h-14">
+            <button onclick="navigateTo('home')" id="nav-mobile-home" class="flex flex-col items-center justify-center gap-1 text-charcoal font-medium">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[10px]">首页</span>
+            </button>
+            <button onclick="navigateTo('catalog')" id="nav-mobile-catalog" class="flex flex-col items-center justify-center gap-1 text-muted">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="text-[10px]">体式库</span>
+            </button>
+            <button onclick="navigateTo('mindful')" id="nav-mobile-mindful" class="flex flex-col items-center justify-center gap-1 text-muted">
+                <i data-lucide="wind" class="w-5 h-5"></i>
+                <span class="text-[10px]">呼吸正念</span>
+            </button>
+            <button onclick="openAiModal()" class="flex flex-col items-center justify-center gap-1 text-sageDark font-medium">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                <span class="text-[10px]">AI 伴练</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ==================== 弹窗 1：AI 普拉提伴练向导 ==================== -->
+    <div id="modal-ai" class="hidden fixed inset-0 z-50 bg-charcoal/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-oatmeal w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border border-clay shadow-2xl flex flex-col max-h-[88vh] overflow-hidden">
+            <!-- 头部 -->
+            <div class="px-5 py-4 bg-white border-b border-clay/70 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-sage/20 text-sageDark flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-serif-title font-bold text-base text-charcoal">AI 普拉提身心向导</h3>
+                            <span id="ai-engine-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-sand text-muted">专家知识库模式</span>
+                        </div>
+                        <p class="text-[11px] text-muted">温和编排今日练习 · 细节与防代偿解答</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="toggleAiSettingsPanel()" class="px-2.5 py-1.5 rounded-xl bg-sand hover:bg-clay/60 text-[11px] font-medium text-charcoal flex items-center gap-1">
+                        <i data-lucide="settings" class="w-3.5 h-3.5"></i> 接入 API
+                    </button>
+                    <button onclick="closeAiModal()" class="p-2 rounded-full hover:bg-sand text-muted">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 可折叠的 API Key 设置面板 -->
+            <div id="ai-settings-panel" class="hidden px-5 py-4 bg-sand/90 border-b border-clay space-y-3 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-charcoal">配置大模型 API（可选 · 留空即用内置专家引擎）</span>
+                    <button onclick="toggleAiSettingsPanel()" class="text-muted hover:text-charcoal">收起</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] text-muted mb-1">接口类型</label>
+                        <select id="ai-provider-select" class="w-full p-2 rounded-xl bg-white border border-clay text-charcoal">
+                            <option value="gemini">Google Gemini API</option>
+                            <option value="openai">DeepSeek / 通义千问 / OpenAI 兼容</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-muted mb-1">模型名称</label>
+                        <input type="text" id="ai-model-input" placeholder="gemini-2.5-flash 或 deepseek-chat" class="w-full p-2 rounded-xl bg-white border border-clay text-charcoal">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] text-muted mb-1">API Base URL（仅 OpenAI 兼容接口需要）</label>
+                    <input type="text" id="ai-baseurl-input" placeholder="https://api.deepseek.com/v1" class="w-full p-2 rounded-xl bg-white border border-clay text-charcoal">
+                </div>
+                <div class="flex gap-2">
+                    <input type="password" id="ai-apikey-input" placeholder="粘贴你的 API Key（仅保存在本地浏览器）" class="flex-grow p-2 rounded-xl bg-white border border-clay text-charcoal">
+                    <button onclick="saveAiSettings()" class="px-4 py-2 rounded-xl bg-sage text-white font-medium shrink-0">保存配置</button>
+                </div>
+            </div>
+
+            <!-- 对话消息区 -->
+            <div id="ai-chat-messages" class="flex-grow overflow-y-auto p-5 space-y-4 text-xs sm:text-sm">
+                <div class="bg-white p-4 rounded-2xl rounded-tl-xs border border-clay/60 space-y-1.5 shadow-2xs">
+                    <p class="font-semibold text-sageDark">你好呀，欢迎来到你的专属练习时光 🌿</p>
+                    <p class="text-charcoal/90 leading-relaxed">
+                        你可以随时告诉我身体此刻的感受（比如：“久坐后背和脖子很僵，想做15分钟舒缓练习” 或 “练臀时总觉得大腿前侧在使劲怎么办”），我会陪你一起找到最舒服的发力方式。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 快捷提问与输入框 -->
+            <div class="p-4 bg-white border-t border-clay/70 space-y-2.5">
+                <div class="flex gap-2 overflow-x-auto no-scrollbar">
+                    <button onclick="sendQuickAiPrompt('久坐圆肩驼背，帮我安排一组温和的肩颈放松与激活序列')" class="px-3 py-1.5 rounded-full bg-oatmeal border border-clay text-[11px] text-charcoal shrink-0 hover:border-sage">舒缓圆肩驼背序列</button>
+                    <button onclick="sendQuickAiPrompt('练臀髋系列时总是大腿前侧或腰部代偿怎么办？')" class="px-3 py-1.5 rounded-full bg-oatmeal border border-clay text-[11px] text-charcoal shrink-0 hover:border-sage">减少臀部训练代偿</button>
+                    <button onclick="sendQuickAiPrompt('如何温柔地找到小肚子深层核心与盆底肌启动的感觉？')" class="px-3 py-1.5 rounded-full bg-oatmeal border border-clay text-[11px] text-charcoal shrink-0 hover:border-sage">如何启动深层核心</button>
+                </div>
+                <div class="flex items-center gap-2 bg-oatmeal p-1.5 rounded-2xl border border-clay">
+                    <input type="text" id="ai-user-input" onkeydown="if(event.key==='Enter') handleSendAiMessage()"
+                        placeholder="说说你今天的身体感受或练习疑问..."
+                        class="w-full px-3 py-1.5 bg-transparent text-xs sm:text-sm focus:outline-none text-charcoal">
+                    <button onclick="handleSendAiMessage()" class="px-4 py-2 rounded-xl bg-sage text-white text-xs font-medium hover:bg-sageDark transition shrink-0">
+                        发送
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗 2：毛毡钢琴轻音乐 + 恒定低通白噪音音疗室 ==================== -->
+    <div id="modal-music" class="hidden fixed inset-0 z-50 bg-charcoal/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-oatmeal w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl border border-clay p-6 space-y-5 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-sage/20 text-sageDark flex items-center justify-center">
+                        <i data-lucide="headphones" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif-title font-bold text-base text-charcoal">沉浸式疗愈音景室</h3>
+                        <p class="text-[11px] text-muted" id="music-modal-subtitle">林间清晨 · 70 BPM 柔绒毛毡钢琴与晨雾微风</p>
+                    </div>
+                </div>
+                <button onclick="toggleMusicModal()" class="p-2 rounded-full hover:bg-sand text-muted">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- 音轨选择列表 -->
+            <div class="grid grid-cols-1 gap-2.5">
+                <button onclick="selectTrack(0)" id="track-btn-0" class="track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border-2 border-sage text-left transition">
+                    <div>
+                        <div class="text-xs sm:text-sm font-bold text-charcoal">林间清晨 · 晨雾微风与露水钢琴</div>
+                        <div class="text-[11px] text-muted mt-0.5">70 BPM · 温暖模拟铺底、稀疏毛毡钢琴泛音与树叶沙沙微风</div>
+                    </div>
+                    <span class="text-xs font-medium text-sageDark shrink-0 ml-2">晨间唤醒</span>
+                </button>
+
+                <button onclick="selectTrack(1)" id="track-btn-1" class="track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border border-clay/70 text-left transition">
+                    <div>
+                        <div class="text-xs sm:text-sm font-bold text-charcoal">雨夜静谧 · 窗畔细雨与深邃琴音</div>
+                        <div class="text-[11px] text-muted mt-0.5">65 BPM · 低通滤波平滑雨幕、悠远钢琴与钢片琴微光</div>
+                    </div>
+                    <span class="text-xs text-muted shrink-0 ml-2">静心内观</span>
+                </button>
+
+                <button onclick="selectTrack(2)" id="track-btn-2" class="track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border border-clay/70 text-left transition">
+                    <div>
+                        <div class="text-xs sm:text-sm font-bold text-charcoal">圣诞前夜 · 暖炉微响与冬夜柔钢</div>
+                        <div class="text-[11px] text-muted mt-0.5">68 BPM · 拟真壁炉木柴轻响、温润大调和弦与星光钢片琴</div>
+                    </div>
+                    <span class="text-xs text-muted shrink-0 ml-2">温暖幸福</span>
+                </button>
+
+                <button onclick="selectTrack(3)" id="track-btn-3" class="track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border border-clay/70 text-left transition">
+                    <div>
+                        <div class="text-xs sm:text-sm font-bold text-charcoal">海风舒展 · 夏日潮汐与远方海鸥</div>
+                        <div class="text-[11px] text-muted mt-0.5">75 BPM · 左右流动海浪、混响柔化海鸥回声与明亮流动钢琴</div>
+                    </div>
+                    <span class="text-xs text-muted shrink-0 ml-2">清爽开阔</span>
+                </button>
+            </div>
+
+            <!-- 独立混音滑块（轻音乐音量 & 白噪音音量） -->
+            <div class="p-3.5 rounded-2xl bg-white/85 border border-clay/60 space-y-3 text-xs">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-muted w-20 shrink-0">轻音乐质感</span>
+                    <input type="range" id="bgm-volume" min="0" max="1" step="0.02" value="0.55" oninput="updateMixLevels()"
+                        class="w-full accent-sage cursor-pointer">
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-muted w-20 shrink-0">白噪音氛围</span>
+                    <input type="range" id="noise-volume" min="0" max="1" step="0.02" value="0.45" oninput="updateMixLevels()"
+                        class="w-full accent-terracotta cursor-pointer">
+                </div>
+            </div>
+
+            <!-- 播放控制按钮 -->
+            <div>
+                <button id="desktop-play-btn" onclick="togglePlayMusic()" class="w-full py-3 rounded-2xl bg-charcoal text-oatmeal text-sm font-medium flex items-center justify-center gap-2 hover:bg-charcoal/90 transition">
+                    <i id="modal-play-icon" data-lucide="play" class="w-4 h-4"></i>
+                    <span id="modal-play-text">开启无缝疗愈音景</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗 3：收录新普拉提动作 ==================== -->
+    <div id="modal-add-move" class="hidden fixed inset-0 z-50 bg-charcoal/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-oatmeal w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border border-clay p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h3 class="font-serif-title font-bold text-lg text-charcoal">随手记录新的体式</h3>
+                <button onclick="closeAddMoveModal()" class="p-2 rounded-full hover:bg-sand text-muted">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-charcoal mb-1">体式名称 *</label>
+                        <input type="text" id="new-move-title" placeholder="例如：侧卧蚌式开合" class="w-full p-2.5 rounded-xl bg-white border border-clay">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-charcoal mb-1">所属系列 *</label>
+                        <select id="new-move-category" class="w-full p-2.5 rounded-xl bg-white border border-clay">
+                            <option value="肩颈系列">肩颈系列</option>
+                            <option value="臀髋系列">臀髋系列</option>
+                            <option value="下肢系列">下肢系列</option>
+                            <option value="全身核心系列">全身核心系列</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-charcoal mb-1">唤醒与强化部位 *</label>
+                        <input type="text" id="new-move-strengthen" placeholder="例如：臀中肌、深层外旋肌" class="w-full p-2.5 rounded-xl bg-white border border-clay">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-charcoal mb-1">舒展与放松部位</label>
+                        <input type="text" id="new-move-relax" placeholder="例如：腰方肌、阔筋膜张肌" class="w-full p-2.5 rounded-xl bg-white border border-clay">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-charcoal mb-1">觉察细节与防代偿提示</label>
+                    <input type="text" id="new-move-cues" placeholder="例如：保持上下两侧腰线等长，骨盆安稳不后倒" class="w-full p-2.5 rounded-xl bg-white border border-clay">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-charcoal mb-1">呼吸与步骤（每行一步）</label>
+                    <textarea id="new-move-steps" rows="3" placeholder="1. 侧卧屈膝，双脚脚跟轻柔对齐坐骨&#10;2. 吸气准备，呼气保持骨盆安稳抬起上方膝盖" class="w-full p-2.5 rounded-xl bg-white border border-clay"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-charcoal mb-1">留存一张体式实拍（可选）</label>
+                    <input type="file" id="new-move-photo" accept="image/*" class="w-full text-xs text-muted file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-sand file:text-charcoal file:font-medium">
+                </div>
+            </div>
+
+            <button onclick="submitNewMove()" class="w-full py-3 rounded-2xl bg-charcoal text-oatmeal text-sm font-medium hover:bg-charcoal/90 transition">
+                收入我的灵感库
+            </button>
+        </div>
+    </div>
+
+    <!-- 全局轻量提示 Toast -->
+    <div id="toast-box" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div id="toast-text" class="px-4 py-2 rounded-full bg-charcoal text-oatmeal text-xs font-medium shadow-lg">提示消息</div>
+    </div>
+
+    <script>
+        // ==================== 1. 完整普拉提动作库（四大系列） ====================
+        const DEFAULT_MOVES = [
+            // ---------- 一、肩颈系列 ----------
+            {
+                id: 'sh-1',
+                title: '天鹅预备式',
+                enTitle: 'Swan Prep',
+                category: '肩颈系列',
+                difficulty: '温和入门',
+                strengthen: '胸椎伸肌群、中下斜方肌、菱形肌',
+                relax: '胸大肌、胸小肌、颈前侧肌群',
+                cues: '想象鼻尖在垫面上轻轻推走一颗弹珠，重点伸展上背部（胸椎段），切勿用双手死推垫面挤压腰椎；沉肩远耳，颈部后侧保持修长。',
+                steps: [
+                    '俯卧于垫面，双腿微开与髋同宽，双手放于肩两侧，手肘贴近躯干。',
+                    '吸气准备，沉肩并将肚脐微微向脊柱方向收起，温柔托住下腰椎。',
+                    '呼气，用上背部力量带动胸口逐节离开垫面，视线看向前下方垫面。',
+                    '吸气保持最高点感受锁骨展开，呼气缓慢逐节落回垫面，重复 6-8 次。'
+                ]
+            },
+            {
+                id: 'sh-2',
+                title: '四足跪姿肩胛俯卧撑',
+                enTitle: 'Quadruped Scapular Push-Up',
+                category: '肩颈系列',
+                difficulty: '温和入门',
+                strengthen: '前锯肌、菱形肌、肩袖稳定肌群',
+                relax: '上斜方肌、肩胛提肌',
+                cues: '全程保持手肘完全伸直但不要锁死，动作幅度仅发生在两侧肩胛骨的“内收靠近”与“外展推开”之间，头部与脊柱成一条直线不低头。',
+                steps: [
+                    '四足跪姿，手腕位于肩膀正下方，膝盖位于髋关节正下方，脊柱中立。',
+                    '吸气，保持手肘伸直，让胸口自然下沉，两侧肩胛骨向脊柱中心靠拢。',
+                    '呼气，双手温柔推垫，让肩胛骨向两侧展开，上背部饱满平展。',
+                    '控制节奏平稳往复 10 次，释放肩颈上束的紧张代偿。'
+                ]
+            },
+            {
+                id: 'sh-3',
+                title: '侧卧书本开合',
+                enTitle: 'Side-Lying Book Opening',
+                category: '肩颈系列',
+                difficulty: '温和入门',
+                strengthen: '胸椎旋转肌群、后三角肌、腹斜肌',
+                relax: '胸大肌、胸小肌、肋间肌',
+                cues: '骨盆与双膝像被轻柔固定在一起不动，所有的旋转都源自胸椎段的扭转，眼睛始终追随移动的手指尖。',
+                steps: [
+                    '侧卧屈膝 90 度，双臂向前伸直掌心相对，头下方可垫薄枕保持颈椎放松。',
+                    '吸气，上方手臂垂直指向上方天花板，指尖向远处延伸。',
+                    '呼气，以胸椎为轴心将上方手臂向后打开，仿佛翻开一本书，双膝保持并拢不分离。',
+                    '吸气在最大打开处停留做一次深呼吸，呼气缓慢合拢，每侧重复 6 次。'
+                ]
+            },
+            {
+                id: 'sh-4',
+                title: '俯卧飞镖式',
+                enTitle: 'Dart',
+                category: '肩颈系列',
+                difficulty: '流动进阶',
+                strengthen: '竖脊肌胸段、中下斜方肌、肱三头肌',
+                relax: '胸前侧筋膜、肩前束',
+                cues: '双臂向脚跟方向修长延伸，带动肩胛骨向下滑动；保持耻骨贴实垫面，肚脐微收离开垫子，避免下背部过度折叠。',
+                steps: [
+                    '俯卧，双腿并拢内侧轻夹，双臂放于体侧掌心朝向大腿。',
+                    '吸气，肩胛骨向脊柱收拢，指尖向脚跟方向延伸，带动胸口微微抬离垫面。',
+                    '呼气，保持上背延展高度，双臂向后上方微抬，感受大臂后侧与上背凝聚。',
+                    '吸气缓慢还原，连续完成 8 次。'
+                ]
+            },
+            {
+                id: 'sh-5',
+                title: '仰卧手臂雪天使',
+                enTitle: 'Supine Arm Snow Angels',
+                category: '肩颈系列',
+                difficulty: '温和入门',
+                strengthen: '下斜方肌、肩袖外旋肌群',
+                relax: '胸小肌、背阔肌上部、颈侧肌群',
+                cues: '手背与小臂在地面滑动画半圆时，始终保持前侧肋骨沉向垫面，一旦感觉腰部拱起或肋骨顶出，立即减小手臂上举幅度。',
+                steps: [
+                    '仰卧屈膝双脚踩垫，骨盆与胸廓保持中立位，双臂放于体侧掌心朝上。',
+                    '吸气，手臂贴地向两侧打开画弧至头顶方向（呈 Y 字形），保持沉肩。',
+                    '呼气，屈肘将手肘向腰部两侧下拉成 W 形，同时收紧前侧肋骨。',
+                    '缓慢流畅地重复 8-10 次，深层释放久坐肩颈僵硬。'
+                ]
+            },
+            {
+                id: 'sh-6',
+                title: '坐姿美人鱼侧弯',
+                enTitle: 'Mermaid Stretch',
+                category: '肩颈系列',
+                difficulty: '温和入门',
+                strengthen: '腹内斜肌、腹外斜肌、侧腰稳定肌',
+                relax: '背阔肌、腰方肌、斜角肌、肋间肌',
+                cues: '侧弯时想象身体夹在两块透明玻璃之间，切勿向前含胸驼背；对侧坐骨始终沉重地扎根在垫面上，先向上拉长脊柱再向侧方弯折。',
+                steps: [
+                    'Z字坐姿或舒适盘腿坐立，脊柱向头顶垂直延伸，右手轻扶垫面。',
+                    '吸气，左手臂向上举过头顶，拉长左侧腰线。',
+                    '呼气，右手微屈肘支撑，身体向右侧画彩虹般侧弯，保持双侧坐骨贴地。',
+                    '吸气侧腰发力回正，左右交替各完成 5 次。'
+                ]
+            },
+
+            // ---------- 二、臀髋系列 ----------
+            {
+                id: 'hp-1',
+                title: '肩桥逐节卷动',
+                enTitle: 'Shoulder Bridge',
+                category: '臀髋系列',
+                difficulty: '温和入门',
+                strengthen: '臀大肌、腘绳肌、腹横肌',
+                relax: '髂腰肌、股直肌（大腿前侧）',
+                cues: '卷动起身时先做微小的骨盆后倾，让尾骨先离开垫面，再一节节剥离腰椎与下胸椎；最高点时膝盖向前延伸，肋骨不要高于骨盆，避免大腿前侧代偿。',
+                steps: [
+                    '仰卧屈膝，双脚分开与坐骨同宽，脚跟靠近臀部，双臂放于体侧。',
+                    '吸气准备，呼气骨盆后倾，尾骨卷起，逐节将脊柱抬离垫面至肩胛下角支撑。',
+                    '吸气在最高点停留，保持臀肌发力与双膝平行指向正前方。',
+                    '呼气从胸骨开始软化，逐节将脊柱放回垫面，最后回到骨盆中立位，重复 8 次。'
+                ]
+            },
+            {
+                id: 'hp-2',
+                title: '侧卧蚌式开合',
+                enTitle: 'Side-Lying Clam',
+                category: '臀髋系列',
+                difficulty: '温和入门',
+                strengthen: '臀中肌、臀小肌、髋关节深层外旋肌',
+                relax: '阔筋膜张肌、腰方肌',
+                cues: '想象后背紧贴一面墙，打开上方膝盖时上方骨盆绝对不能向后翻倒；下侧腰部微微离开垫面，保持上下两侧腰线等长。',
+                steps: [
+                    '侧卧屈髋约 45 度、屈膝 90 度，双脚脚跟并拢并与坐骨成一条直线。',
+                    '吸气稳定核心，呼气保持双脚脚跟紧贴，由臀部外侧发力将上方膝盖向上打开。',
+                    '吸气有控制地缓慢合拢膝盖，不完全卸力，每侧连续完成 12-15 次。'
+                ]
+            },
+            {
+                id: 'hp-3',
+                title: '四足跪姿驴踢',
+                enTitle: 'Quadruped Donkey Kick',
+                category: '臀髋系列',
+                difficulty: '温和入门',
+                strengthen: '臀大肌上部、核心抗旋转肌群',
+                relax: '髋屈肌群',
+                cues: '上抬脚跟时幅度无需过高，只要达到髋关节伸展极限即可；一旦腰椎出现塌陷或骨盆向对侧倾斜，说明已超出臀肌控制范围。',
+                steps: [
+                    '四足跪姿，保持屈膝 90 度勾脚尖，核心收紧维持骨盆水平。',
+                    '吸气准备，呼气臀大肌发力将右脚脚底垂直推向天花板方向。',
+                    '吸气控制下放膝盖轻触垫面，每侧完成 12 次后换边。'
+                ]
+            },
+            {
+                id: 'hp-4',
+                title: '四足跪姿消防栓式',
+                enTitle: 'Fire Hydrant',
+                category: '臀髋系列',
+                difficulty: '流动进阶',
+                strengthen: '臀中肌、臀小肌、腹斜肌',
+                relax: '大腿内收肌群',
+                cues: '外展抬腿时，保持支撑腿一侧的髋部垂直于地面，不要向支撑侧顶胯偏移；双臂均匀推地，维持双肩水平。',
+                steps: [
+                    '四足跪姿，脊柱保持长而稳定，肚脐微收贴向脊柱。',
+                    '呼气，保持屈膝角度不变，将右腿向正侧方水平抬起。',
+                    '吸气缓慢还原，注意控制下放速度，每侧重复 10-12 次。'
+                ]
+            },
+            {
+                id: 'hp-5',
+                title: '俯卧单腿后踢',
+                enTitle: 'Single Leg Kick',
+                category: '臀髋系列',
+                difficulty: '流动进阶',
+                strengthen: '腘绳肌、臀大肌、肩胛稳定肌群',
+                relax: '股四头肌（大腿前侧）、髂腰肌',
+                cues: '手肘撑地时胸口向前上方打开，不要耸肩缩脖子；屈膝踢臀时保持耻骨紧贴垫面，避免骨盆随小腿踢动而上下晃动。',
+                steps: [
+                    '俯卧，双小臂平行撑垫，手肘位于肩正下方，双腿并拢伸直离开垫面少许。',
+                    '吸气准备，呼气右腿屈膝向臀部方向轻快弹踢两下（吸-吸，呼还原）。',
+                    '伸直右腿还原的同时，左腿交替屈膝弹踢，左右交替各 8 组。'
+                ]
+            },
+            {
+                id: 'hp-6',
+                title: '鸽子式髋部深度释放',
+                enTitle: 'Pilates Hip Flexor & Piriformis Stretch',
+                category: '臀髋系列',
+                difficulty: '温和入门',
+                strengthen: '骨盆底肌控制',
+                relax: '梨状肌、臀大肌深层、对侧髂腰肌',
+                cues: '保持两侧髂前上棘朝向正前方水平，若前侧臀部悬空较多，可在臀下垫一块折叠毛巾以彻底放松髋关节囊。',
+                steps: [
+                    '从四足跪姿开始，将右膝向前移至右手腕后方，右小腿斜向横放于垫前。',
+                    '左腿向后充分伸直，脚背贴地，骨盆摆正下沉。',
+                    '吸气延展脊柱，呼气上半身缓慢前倾，双手或小臂枕于额头下，保持 5-8 个深长呼吸后换侧。'
+                ]
+            },
+
+            // ---------- 三、下肢系列 ----------
+            {
+                id: 'lg-1',
+                title: '侧卧直腿上下抬',
+                enTitle: 'Side Kick: Up and Down',
+                category: '下肢系列',
+                difficulty: '温和入门',
+                strengthen: '臀中肌、阔筋膜张肌、腹斜肌',
+                relax: '大腿内收肌群',
+                cues: '上抬腿时绷脚背，下落时勾脚跟并向远处拉长；上抬高度无需超过 45 度，一旦腰部开始挤压垫面即停止上抬。',
+                steps: [
+                    '侧卧身体呈一条直线，双腿可略向前移 15 度以增加稳定性，一手枕头一手轻扶垫前。',
+                    '吸气，上方腿绷脚背向上抬起至髋部高度，保持脚尖朝前不外翻。',
+                    '呼气，勾脚跟仿佛抗阻般缓慢下放至与下方腿平行，每侧完成 10-12 次。'
+                ]
+            },
+            {
+                id: 'lg-2',
+                title: '侧卧内收肌提拉',
+                enTitle: 'Inner Thigh Lifts',
+                category: '下肢系列',
+                difficulty: '温和入门',
+                strengthen: '大收肌、长收肌、耻骨肌（大腿内侧）',
+                relax: '臀外侧肌群',
+                cues: '由大腿根部内侧发力将整条下侧腿垂直向上提起，而非仅仅勾动脚踝；下侧腿保持膝盖完全伸直。',
+                steps: [
+                    '侧卧，上方腿屈膝踩在下方腿前方的垫面上（或向后踩地），下方腿完全伸直勾脚。',
+                    '吸气准备，呼气收紧核心与大腿内侧，将下方直腿向天花板方向抬起。',
+                    '吸气缓慢控制下放至距离地面 1 厘米处悬停，每侧完成 12-15 次。'
+                ]
+            },
+            {
+                id: 'lg-3',
+                title: '侧卧前后踢腿',
+                enTitle: 'Side Kick: Front and Back',
+                category: '下肢系列',
+                difficulty: '流动进阶',
+                strengthen: '屈髋肌群、臀大肌、核心抗摆动能力',
+                relax: '腘绳肌（前踢时）、股直肌（后踢时）',
+                cues: '腿向前踢时脊柱绝对不能含胸驼背，腿向后延伸时腰椎绝对不能向前塌陷，躯干像雕塑般纹丝不动。',
+                steps: [
+                    '侧卧位，将上方腿抬高至与髋同高，全程保持该水平高度不变。',
+                    '吸气，上方腿勾脚跟向前踢出两次（脉冲踢），感受大腿后侧拉伸。',
+                    '呼气，绷脚背将腿向身体后方延伸拉长，臀肌收紧，往复 8-10 次后换边。'
+                ]
+            },
+            {
+                id: 'lg-4',
+                title: '仰卧单腿画圈',
+                enTitle: 'Single Leg Circles',
+                category: '下肢系列',
+                difficulty: '温和入门',
+                strengthen: '核心稳定肌群、股四头肌、髋周协调肌',
+                relax: '髋关节囊、腘绳肌',
+                cues: '想象脚尖是一支画笔在天花板上画哈密瓜大小的圆圈；画圈过程中对侧臀部与骨盆始终像铁锚一样钉在垫面上不左右晃动。',
+                steps: [
+                    '仰卧，左腿伸直踩实垫面（柔韧性受限可微屈左膝），右腿垂直伸向天花板。',
+                    '吸气，右腿向身体内侧越过中线开始画圈；呼气向下向外画半圆回到起点。',
+                    '顺时针画 6 圈后，逆时针反向画 6 圈，随后换左腿重复。'
+                ]
+            },
+            {
+                id: 'lg-5',
+                title: '芭蕾二位宽距深蹲提踵',
+                enTitle: 'Plie Squat with Heel Raise',
+                category: '下肢系列',
+                difficulty: '流动进阶',
+                strengthen: '股内侧肌、内收肌群、臀大肌、比目鱼肌',
+                relax: '足底筋膜、髋内收肌拉伸',
+                cues: '下蹲时上半身保持垂直地面上下移动（如背靠墙壁滑行），膝盖方向始终对准第二、三脚趾，切勿膝盖内扣。',
+                steps: [
+                    '站立双脚宽距分开，脚尖自然向外打开约 45 度，双手叉腰或前平举。',
+                    '吸气，屈膝垂直下蹲至大腿接近水平，保持脊柱直立。',
+                    '呼气，保持骨盆高度不变，交替或同时抬起脚后跟，吸气落跟，重复 8 次后站起。'
+                ]
+            },
+            {
+                id: 'lg-6',
+                title: '仰卧绳带/毛巾腿后侧拉伸',
+                enTitle: 'Supine Hamstring Stretch',
+                category: '下肢系列',
+                difficulty: '温和入门',
+                strengthen: '股四头肌等长收紧',
+                relax: '腘绳肌、腓肠肌、跟腱',
+                cues: '拉伸时坐骨向远端垫面延伸，不要为了拉近腿部而把尾骨卷离地面；肩膀与颈部完全放松贴地。',
+                steps: [
+                    '仰卧，将普拉提弹力带或长毛巾套在右脚足弓处，右腿伸直向天花板延伸。',
+                    '吸气延展腿后侧，呼气双手轻拉毛巾将右腿温柔拉向胸口方向，勾脚跟加强小腿拉伸。',
+                    '保持 5 个深呼吸后，可让腿向内外各微倾 15 度拉伸不同肌束，随后换边。'
+                ]
+            },
+
+            // ---------- 四、全身核心系列 ----------
+            {
+                id: 'cr-1',
+                title: '百次拍击',
+                enTitle: 'The Hundred',
+                category: '全身核心系列',
+                difficulty: '流动进阶',
+                strengthen: '腹直肌、腹横肌、颈深屈肌、心肺耐力',
+                relax: '胸椎后侧筋膜',
+                cues: '用胸骨下沉带动上背部卷起至肩胛骨下角离地，视线看向大腿中段而非天花板以防脖子酸痛；双臂上下拍击要有力短促，带动躯干稳定。',
+                steps: [
+                    '仰卧双腿呈桌面位（初学者可双脚踩地，进阶者双腿伸直 45 度），上背卷起，双臂悬空于体侧。',
+                    '鼻吸 5 拍（同时双臂上下拍击 5 次），口呼 5 拍（双臂继续拍击 5 次）。',
+                    '保持呼吸节奏与核心收紧，累计完成 10 组共 100 次拍击。'
+                ]
+            },
+            {
+                id: 'cr-2',
+                title: '死虫式核心抗伸展',
+                enTitle: 'Dead Bug',
+                category: '全身核心系列',
+                difficulty: '温和入门',
+                strengthen: '腹横肌、腹内斜肌、盆底肌',
+                relax: '下腰椎竖脊肌张力',
+                cues: '对侧手脚向远端延伸时，下背部与垫面之间的空隙必须保持恒定不变；一旦感觉腰部拱起，立即减小腿部下放的角度。',
+                steps: [
+                    '仰卧，双腿抬起呈桌面位（髋膝各 90 度），双臂垂直指向上方天花板。',
+                    '吸气准备，呼气收紧核心，同时将右手臂向头顶方向延伸、左腿向前伸直下放。',
+                    '吸气有控制地还原至起始桌面位，左右交替共完成 12-16 次。'
+                ]
+            },
+            {
+                id: 'cr-3',
+                title: '单腿伸展',
+                enTitle: 'Single Leg Stretch',
+                category: '全身核心系列',
+                difficulty: '温和入门',
+                strengthen: '腹直肌、腹横肌、深层核心耐力',
+                relax: '对侧髋屈肌',
+                cues: '双手轻扶屈膝腿（外侧手扶脚踝、内侧手扶膝盖）起到引导轨道作用，不要用手死抱膝盖借力；骨盆全程稳定不左右摇晃。',
+                steps: [
+                    '仰卧上背卷起至肩胛下角离地，右腿屈膝拉向胸口，左腿向前伸直悬空 45 度。',
+                    '吸气切换双腿，呼气将左腿屈膝拉近胸口，右腿向前伸直延展。',
+                    '保持上背高度不变，流畅交替完成 10-12 组。'
+                ]
+            },
+            {
+                id: 'cr-4',
+                title: '十字交叉',
+                enTitle: 'Criss-Cross',
+                category: '全身核心系列',
+                difficulty: '流动进阶',
+                strengthen: '腹内斜肌、腹外斜肌（侧腰马甲线）',
+                relax: '胸椎旋转灵活性',
+                cues: '用“一侧腋窝找对侧膝盖”而非“手肘去够膝盖”，手肘始终保持向两侧打开；骨盆保持水平贴地不随扭转翻起。',
+                steps: [
+                    '仰卧屈膝桌面位，双手十指相扣轻托后脑勺，手肘自然打开。',
+                    '呼气，上背卷起并向右侧旋转胸椎，左胸口找右膝盖，同时左腿向前伸直。',
+                    '吸气回到中心保持上背高度，呼气向左侧旋转，左右交替共 10 组。'
+                ]
+            },
+            {
+                id: 'cr-5',
+                title: '脊柱向前伸展',
+                enTitle: 'Spine Stretch Forward',
+                category: '全身核心系列',
+                difficulty: '温和入门',
+                strengthen: '腹横肌深层内收、脊柱节段控制',
+                relax: '整条后表链（竖脊肌、腘绳肌）',
+                cues: '想象腹部前方有一个巨大的健身球，你需要收腹越过这个球向前卷动，而非直接从髋部向前折叠压肚子。',
+                steps: [
+                    '长坐姿，双腿分开略宽于肩并勾脚尖，脊柱垂直向天花板拔高（腘绳肌紧可微屈膝）。',
+                    '吸气延展脊柱，呼气从头顶开始低头，腹部向内深挖，逐节向前卷动脊柱，指尖向前延伸。',
+                    '吸气停留感受后背拉开，呼气从腰椎开始逐节堆叠回直立坐姿，重复 6 次。'
+                ]
+            },
+            {
+                id: 'cr-6',
+                title: '平板支撑腿部后拉',
+                enTitle: 'Leg Pull Front',
+                category: '全身核心系列',
+                difficulty: '深度控制',
+                strengthen: '全身前后链整合、前锯肌、核心、臀大肌',
+                relax: '跟腱与小腿后侧',
+                cues: '双手有力推地保持肩胛饱满，身体从头顶到脚跟呈一条斜直线不塌腰不撅臀；抬腿时高度仅需几厘米，确保骨盆不发生任何旋转。',
+                steps: [
+                    '进入标准高平板支撑姿势，手腕在肩正下方，双脚并拢脚尖踩地。',
+                    '吸气，保持身体稳定，右脚绷脚背向后上方抬起约 5 厘米。',
+                    '呼气，支撑腿脚跟向后蹬伸拉长跟腱，吸气前移落回右脚，左右交替各 6 次。'
+                ]
+            }
+        ];
+
+        // ==================== 1.5 自然语义与身体部位同义词搜索映射 ====================
+        const BODY_SYNONYM_GROUPS = [
+            {
+                label: '腹部与深层核心',
+                keywords: ['肚子', '小腹', '腹部', '腹肌', '马甲线', '肚腩', '腰腹', '核心', '侧腰', '人鱼线', '产后', '腹直肌', '腹横肌', '腹斜肌', '盆底'],
+                expandTerms: ['腹直肌', '腹横肌', '腹斜肌', '核心', '侧腰', '马甲线', '盆底肌', '全身核心系列']
+            },
+            {
+                label: '肩颈与上背部',
+                keywords: ['脖子', '肩颈', '肩膀', '斜方肌', '驼背', '圆肩', '富贵包', '上背', '胸椎', '含胸', '肩胛', '落枕', '后背'],
+                expandTerms: ['斜方肌', '肩胛', '胸椎', '前锯肌', '菱形肌', '胸大肌', '肩颈系列']
+            },
+            {
+                label: '臀部与髋关节',
+                keywords: ['屁股', '臀', '臀部', '假胯宽', '妈妈臀', '胯', '髋', '骨盆', '梨状肌', '翘臀', '臀线'],
+                expandTerms: ['臀大肌', '臀中肌', '臀小肌', '髋', '骨盆', '梨状肌', '臀髋系列']
+            },
+            {
+                label: '大腿、小腿与下肢线条',
+                keywords: ['腿', '大腿', '小腿', '内侧', '大腿内侧', '拜拜肉', '粗腿', '瘦腿', '脚踝', '足底', '腿型', '拉伸', '柔韧'],
+                expandTerms: ['内收肌', '股四头肌', '腘绳肌', '腓肠肌', '比目鱼肌', '下肢系列']
+            },
+            {
+                label: '腰椎与下背部舒缓',
+                keywords: ['腰', '腰痛', '腰酸', '下背', '腰肌', '脊柱'],
+                expandTerms: ['腰方肌', '竖脊肌', '下腰椎', '脊柱', '骨盆', '核心']
+            }
+        ];
+
+        function expandSearchQuery(rawQuery) {
+            const q = rawQuery.toLowerCase().trim();
+            if (!q) return { terms: [], matchedLabel: null };
+
+            const terms = new Set([q]);
+            let matchedLabel = null;
+
+            BODY_SYNONYM_GROUPS.forEach(group => {
+                const hit = group.keywords.some(kw => q.includes(kw) || kw.includes(q));
+                if (hit) {
+                    matchedLabel = group.label;
+                    group.expandTerms.forEach(t => terms.add(t.toLowerCase()));
+                }
+            });
+
+            return { terms: Array.from(terms), matchedLabel };
+        }
+
+        // ==================== 2. 状态管理与 IndexedDB 本地持久化 ====================
+        let allMoves = [];
+        let currentCategoryFilter = '全部';
+        let currentDetailMoveId = null;
+
+        const DB_NAME = 'PilatesDictionaryDB';
+        const DB_VERSION = 3;
+        const STORE_NAME = 'moves';
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function loadMovesFromDB() {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const getAllReq = store.getAll();
+
+                getAllReq.onsuccess = () => {
+                    const existing = getAllReq.result || [];
+                    const existingMap = new Map(existing.map(item => [item.id, item]));
+
+                    DEFAULT_MOVES.forEach(defMove => {
+                        const saved = existingMap.get(defMove.id);
+                        const merged = {
+                            ...defMove,
+                            customPhoto: saved?.customPhoto || null,
+                            notes: saved?.notes || ''
+                        };
+                        store.put(merged);
+                        existingMap.set(defMove.id, merged);
+                    });
+
+                    allMoves = Array.from(existingMap.values());
+                    resolve(allMoves);
+                };
+                getAllReq.onerror = () => reject(getAllReq.error);
+            });
+        }
+
+        async function saveMoveToDB(move) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.put(move);
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        // ==================== 3. 优雅的内置矢量艺术示意图生成 ====================
+        function getDefaultIllustration(move) {
+            const palettes = {
+                '肩颈系列': { bg: '#EAEFE9', accent: '#687A68', sub: '#8C9E8C' },
+                '臀髋系列': { bg: '#F5EBE6', accent: '#C88D74', sub: '#DDA994' },
+                '下肢系列': { bg: '#EFECE6', accent: '#8C7A5B', sub: '#B5A384' },
+                '全身核心系列': { bg: '#E8ECEF', accent: '#5B7285', sub: '#869DB0' }
+            };
+            const p = palettes[move.category] || palettes['肩颈系列'];
+            const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+                <rect width="400" height="300" fill="${p.bg}"/>
+                <circle cx="320" cy="70" r="85" fill="${p.sub}" opacity="0.18"/>
+                <circle cx="70" cy="240" r="95" fill="${p.accent}" opacity="0.12"/>
+                <path d="M 60 225 Q 200 185 340 225" stroke="${p.accent}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M 115 205 C 155 150, 245 150, 285 205" stroke="${p.accent}" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <circle cx="200" cy="128" r="14" fill="${p.accent}" opacity="0.85"/>
+                <text x="200" y="256" font-family="sans-serif" font-size="14" font-weight="600" fill="${p.accent}" text-anchor="middle">${move.title}</text>
+                <text x="200" y="275" font-family="sans-serif" font-size="10" fill="#78736D" text-anchor="middle">${move.category} · 点击下方留存你的练习实拍</text>
+            </svg>`;
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+
+        // ==================== 4. 导航与视图渲染逻辑 ====================
+        function navigateTo(viewName, category = null) {
+            ['home', 'catalog', 'detail', 'mindful'].forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) target.classList.remove('hidden');
+
+            ['home', 'catalog', 'mindful'].forEach(nav => {
+                const dBtn = document.getElementById(`nav-desktop-${nav}`);
+                const mBtn = document.getElementById(`nav-mobile-${nav}`);
+                const isActive = (nav === viewName) || (viewName === 'detail' && nav === 'catalog');
+                if (dBtn) {
+                    dBtn.className = isActive
+                        ? 'px-4 py-1.5 rounded-xl text-sm font-medium transition bg-white text-charcoal shadow-2xs'
+                        : 'px-4 py-1.5 rounded-xl text-sm font-medium transition text-muted hover:text-charcoal';
+                }
+                if (mBtn) {
+                    mBtn.className = isActive
+                        ? 'flex flex-col items-center justify-center gap-1 text-charcoal font-medium'
+                        : 'flex flex-col items-center justify-center gap-1 text-muted';
+                }
+            });
+
+            if (viewName === 'catalog') {
+                if (category) setCategoryFilter(category);
+                else renderCatalog();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            safeCreateIcons();
+        }
+
+        function handleHomeSearch() {
+            const val = document.getElementById('home-search-input').value.trim();
+            document.getElementById('catalog-search-input').value = val;
+            navigateTo('catalog', '全部');
+        }
+
+        function quickSearchKeyword(keyword) {
+            document.getElementById('catalog-search-input').value = keyword;
+            navigateTo('catalog', '全部');
+        }
+
+        function clearCatalogSearch() {
+            document.getElementById('catalog-search-input').value = '';
+            renderCatalog();
+        }
+
+        function setCategoryFilter(cat) {
+            currentCategoryFilter = cat;
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                const isMatch = btn.getAttribute('data-cat') === cat;
+                btn.className = isMatch
+                    ? 'cat-pill px-4 py-2 rounded-full text-xs font-medium bg-charcoal text-oatmeal shrink-0 transition'
+                    : 'cat-pill px-4 py-2 rounded-full text-xs font-medium bg-white text-muted border border-clay/70 shrink-0 transition';
+            });
+            renderCatalog();
+        }
+
+        function resetCatalogFilters() {
+            document.getElementById('catalog-search-input').value = '';
+            setCategoryFilter('全部');
+        }
+
+        function updateHomeCounts() {
+            const labels = {
+                'count-shoulder': '舒展上背',
+                'count-hip': '骨盆稳定',
+                'count-leg': '轻盈延展',
+                'count-core': '深层凝聚'
+            };
+            Object.entries(labels).forEach(([id, text]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = text;
+            });
+        }
+
+        function renderCatalog() {
+            const grid = document.getElementById('catalog-grid');
+            const emptyState = document.getElementById('catalog-empty');
+            const rawSearch = document.getElementById('catalog-search-input').value.trim();
+            const clearBtn = document.getElementById('btn-clear-search');
+            const smartBanner = document.getElementById('smart-search-banner');
+            const smartHintText = document.getElementById('smart-search-hint-text');
+
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', !rawSearch);
+            }
+
+            const { terms, matchedLabel } = expandSearchQuery(rawSearch);
+
+            if (matchedLabel && rawSearch) {
+                smartBanner.classList.remove('hidden');
+                smartHintText.textContent = `✨ 已为你智能匹配「${matchedLabel}」相关的唤醒与放松体式`;
+            } else {
+                smartBanner.classList.add('hidden');
+            }
+
+            const filtered = allMoves.filter(m => {
+                const matchCat = currentCategoryFilter === '全部' || m.category === currentCategoryFilter;
+                if (!rawSearch) return matchCat;
+
+                const searchableCorpus = [
+                    m.title,
+                    m.enTitle || '',
+                    m.category,
+                    m.strengthen || m.muscles || '',
+                    m.relax || '',
+                    m.cues || '',
+                    ...(m.steps || [])
+                ].join(' ').toLowerCase();
+
+                const matchText = terms.some(term => searchableCorpus.includes(term));
+                return matchCat && matchText;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(move => {
+                const imgSrc = move.customPhoto || getDefaultIllustration(move);
+                const badgeHtml = move.customPhoto
+                    ? `<span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-sage text-white text-[10px] font-medium shadow-2xs flex items-center gap-1"><i data-lucide="camera" class="w-3 h-3"></i>我的实拍</span>`
+                    : `<span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/90 text-muted text-[10px] font-medium border border-clay/60">柔光图示</span>`;
+
+                return `
+                    <div onclick="openMoveDetail('${move.id}')" class="pilates-card cursor-pointer rounded-2xl bg-white border border-clay/60 overflow-hidden flex flex-col">
+                        <div class="relative aspect-[4/3] w-full bg-sand overflow-hidden">
+                            <img src="${imgSrc}" alt="${move.title}" class="w-full h-full object-cover">
+                            ${badgeHtml}
+                        </div>
+                        <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-[11px] text-sageDark font-medium mb-1">
+                                    <span>${move.category}</span>
+                                    <span>·</span>
+                                    <span class="text-muted">${move.difficulty}</span>
+                                </div>
+                                <h3 class="font-serif-title text-lg font-bold text-charcoal">${move.title}</h3>
+                                <p class="text-[11px] text-terracotta mt-1.5 line-clamp-1">唤醒：${move.strengthen || move.muscles}</p>
+                                <p class="text-[11px] text-sageDark mt-0.5 line-clamp-1">舒展：${move.relax || '深层筋膜与关节张力'}</p>
+                            </div>
+                            <div class="pt-2.5 border-t border-sand flex items-center justify-between text-xs font-medium text-charcoal">
+                                <span>查看觉察细节与实拍</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4 text-sageDark"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            safeCreateIcons();
+        }
+
+        function openMoveDetail(moveId) {
+            const move = allMoves.find(m => m.id === moveId);
+            if (!move) return;
+            currentDetailMoveId = moveId;
+
+            document.getElementById('detail-category').textContent = move.category;
+            document.getElementById('detail-difficulty').textContent = move.difficulty;
+            document.getElementById('detail-title').textContent = move.title;
+            document.getElementById('detail-en-title').textContent = move.enTitle || 'Pilates Movement';
+            document.getElementById('detail-strengthen').textContent = move.strengthen || move.muscles;
+            document.getElementById('detail-relax').textContent = move.relax || '释放周边代偿肌肉张力';
+            document.getElementById('detail-cues').textContent = move.cues || '保持骨盆中立位，配合横向肋间呼吸平稳完成。';
+            document.getElementById('detail-notes').value = move.notes || '';
+
+            const imgEl = document.getElementById('detail-image');
+            const statusEl = document.getElementById('detail-photo-status');
+            const resetBtn = document.getElementById('btn-reset-photo');
+
+            if (move.customPhoto) {
+                imgEl.src = move.customPhoto;
+                statusEl.textContent = '✨ 我的练习实拍（已安心留存）';
+                statusEl.className = 'text-[11px] font-medium px-2.5 py-1 rounded-lg bg-sage/20 text-sageDark';
+                resetBtn.classList.remove('hidden');
+            } else {
+                imgEl.src = getDefaultIllustration(move);
+                statusEl.textContent = '柔光示意图（支持上传你的练习实拍）';
+                statusEl.className = 'text-[11px] font-medium px-2.5 py-1 rounded-lg bg-white border border-clay text-muted';
+                resetBtn.classList.add('hidden');
+            }
+
+            const stepsList = document.getElementById('detail-steps');
+            stepsList.innerHTML = move.steps.map((step, idx) => `
+                <li class="flex items-start gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-sand text-charcoal text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
+                    <span>${step}</span>
+                </li>
+            `).join('');
+
+            navigateTo('detail');
+            safeCreateIcons();
+        }
+
+        function compressImageFile(file, maxWidth = 960) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.82));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleDetailPhotoUpload(event) {
+            const file = event.target.files?.[0];
+            if (!file || !currentDetailMoveId) return;
+
+            try {
+                showToast('正在为你保存练习实拍...');
+                const compressedDataUrl = await compressImageFile(file);
+                const moveIndex = allMoves.findIndex(m => m.id === currentDetailMoveId);
+                if (moveIndex > -1) {
+                    allMoves[moveIndex].customPhoto = compressedDataUrl;
+                    await saveMoveToDB(allMoves[moveIndex]);
+                    openMoveDetail(currentDetailMoveId);
+                    showToast('已安心留存在本地，下次打开自动展现 ✨');
+                }
+            } catch (err) {
+                showToast('图片处理稍有波折，请再试一次');
+            }
+        }
+
+        async function resetCurrentMovePhoto() {
+            const moveIndex = allMoves.findIndex(m => m.id === currentDetailMoveId);
+            if (moveIndex > -1) {
+                allMoves[moveIndex].customPhoto = null;
+                await saveMoveToDB(allMoves[moveIndex]);
+                openMoveDetail(currentDetailMoveId);
+                showToast('已恢复默认柔光示意图');
+            }
+        }
+
+        async function saveCurrentMoveNotes() {
+            const moveIndex = allMoves.findIndex(m => m.id === currentDetailMoveId);
+            if (moveIndex > -1) {
+                allMoves[moveIndex].notes = document.getElementById('detail-notes').value;
+                await saveMoveToDB(allMoves[moveIndex]);
+                const hint = document.getElementById('notes-save-hint');
+                hint.classList.remove('opacity-0');
+                setTimeout(() => hint.classList.add('opacity-0'), 2000);
+            }
+        }
+
+        // ==================== 5. 新增自定义动作逻辑 ====================
+        function openAddMoveModal() {
+            document.getElementById('modal-add-move').classList.remove('hidden');
+        }
+        function closeAddMoveModal() {
+            document.getElementById('modal-add-move').classList.add('hidden');
+        }
+
+        async function submitNewMove() {
+            const title = document.getElementById('new-move-title').value.trim();
+            const category = document.getElementById('new-move-category').value;
+            const strengthen = document.getElementById('new-move-strengthen').value.trim();
+            const relax = document.getElementById('new-move-relax').value.trim() || '释放周边代偿肌肉';
+            const cues = document.getElementById('new-move-cues').value.trim() || '保持骨盆中立与横向肋间呼吸，温柔控制动作节奏。';
+            const stepsRaw = document.getElementById('new-move-steps').value.trim();
+            const photoFile = document.getElementById('new-move-photo').files?.[0];
+
+            if (!title || !strengthen) {
+                showToast('请先填写体式名称与唤醒强化部位');
+                return;
+            }
+
+            let customPhoto = null;
+            if (photoFile) {
+                customPhoto = await compressImageFile(photoFile);
+            }
+
+            const steps = stepsRaw
+                ? stepsRaw.split('\n').map(s => s.replace(/^\d+[\.、]\s*/, '').trim()).filter(Boolean)
+                : ['吸气准备，温柔拉长脊柱并稳定骨盆中立位。', '呼气启动深层核心，有控制地完成目标动作。'];
+
+            const newMove = {
+                id: 'custom-' + Date.now(),
+                title,
+                enTitle: 'Custom Pilates Move',
+                category,
+                difficulty: '私人收藏',
+                strengthen,
+                relax,
+                cues,
+                steps,
+                customPhoto,
+                notes: ''
+            };
+
+            allMoves.unshift(newMove);
+            await saveMoveToDB(newMove);
+            updateHomeCounts();
+            renderCatalog();
+            closeAddMoveModal();
+            showToast(`「${title}」已收入你的灵感库 ✨`);
+
+            // 清空表单
+            document.getElementById('new-move-title').value = '';
+            document.getElementById('new-move-strengthen').value = '';
+            document.getElementById('new-move-relax').value = '';
+            document.getElementById('new-move-cues').value = '';
+            document.getElementById('new-move-steps').value = '';
+            document.getElementById('new-move-photo').value = '';
+        }
+
+        // ==================== 6. 双引擎 AI 普拉提身心向导（支持自定义 API + 内置专家知识库） ====================
+        const AI_CONFIG_KEY = 'pilates_ai_config_v1';
+
+        function getAiConfig() {
+            try {
+                return JSON.parse(localStorage.getItem(AI_CONFIG_KEY)) || {
+                    provider: 'gemini',
+                    model: 'gemini-2.5-flash',
+                    baseUrl: '',
+                    apiKey: ''
+                };
+            } catch {
+                return { provider: 'gemini', model: 'gemini-2.5-flash', baseUrl: '', apiKey: '' };
+            }
+        }
+
+        function updateAiBadge() {
+            const cfg = getAiConfig();
+            const badge = document.getElementById('ai-engine-badge');
+            if (!badge) return;
+            if (cfg.apiKey && cfg.apiKey.trim()) {
+                badge.textContent = cfg.provider === 'gemini' ? 'Gemini 云端引擎' : '自定义大模型已连接';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-sage/20 text-sageDark font-medium';
+            } else {
+                badge.textContent = '专家知识库模式';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-sand text-muted';
+            }
+        }
+
+        function openAiModal() {
+            document.getElementById('modal-ai').classList.remove('hidden');
+            const cfg = getAiConfig();
+            document.getElementById('ai-provider-select').value = cfg.provider || 'gemini';
+            document.getElementById('ai-model-input').value = cfg.model || 'gemini-2.5-flash';
+            document.getElementById('ai-baseurl-input').value = cfg.baseUrl || '';
+            document.getElementById('ai-apikey-input').value = cfg.apiKey || '';
+            updateAiBadge();
+            safeCreateIcons();
+        }
+
+        function closeAiModal() {
+            document.getElementById('modal-ai').classList.add('hidden');
+        }
+
+        function toggleAiSettingsPanel() {
+            document.getElementById('ai-settings-panel').classList.toggle('hidden');
+        }
+
+        function saveAiSettings() {
+            const cfg = {
+                provider: document.getElementById('ai-provider-select').value,
+                model: document.getElementById('ai-model-input').value.trim() || 'gemini-2.5-flash',
+                baseUrl: document.getElementById('ai-baseurl-input').value.trim(),
+                apiKey: document.getElementById('ai-apikey-input').value.trim()
+            };
+            localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(cfg));
+            updateAiBadge();
+            toggleAiSettingsPanel();
+            showToast(cfg.apiKey ? 'AI 模型配置已安心保存 ✓' : '已切换为内置专家知识库模式');
+        }
+
+        function askAiAboutCurrentMove() {
+            const move = allMoves.find(m => m.id === currentDetailMoveId);
+            if (!move) return;
+            openAiModal();
+            sendQuickAiPrompt(`我正在练习「${move.title}」（${move.category}），请用温柔易懂的语言帮我拆解它的发力细节、呼吸配合以及最容易出现的代偿问题。`);
+        }
+
+        function sendQuickAiPrompt(text) {
+            document.getElementById('ai-user-input').value = text;
+            handleSendAiMessage();
+        }
+
+        function appendChatBubble(role, htmlContent) {
+            const box = document.getElementById('ai-chat-messages');
+            const wrapper = document.createElement('div');
+            if (role === 'user') {
+                wrapper.className = 'flex justify-end';
+                wrapper.innerHTML = `<div class="bg-charcoal text-oatmeal px-4 py-2.5 rounded-2xl rounded-tr-xs max-w-[85%] leading-relaxed shadow-2xs">${htmlContent}</div>`;
+            } else {
+                wrapper.className = 'flex justify-start';
+                wrapper.innerHTML = `<div class="bg-white text-charcoal p-4 rounded-2xl rounded-tl-xs border border-clay/60 max-w-[90%] leading-relaxed shadow-2xs space-y-2">${htmlContent}</div>`;
+            }
+            box.appendChild(wrapper);
+            box.scrollTop = box.scrollHeight;
+            return wrapper;
+        }
+
+        // 内置普拉提解剖学专家知识库兜底回答（零配置开箱可用）
+        function generateOfflinePilatesResponse(prompt) {
+            const q = prompt.toLowerCase();
+            if (q.includes('肩') || q.includes('颈') || q.includes('驼背') || q.includes('圆肩') || q.includes('背')) {
+                return `
+                    <p class="font-semibold text-sageDark">🌿 久坐肩颈舒展与上背唤醒序列建议</p>
+                    <p>当我们长时间伏案时，胸前侧筋膜会悄悄变紧，而中下斜方肌则容易“偷懒”。建议按以下温柔节奏练习 12-15 分钟：</p>
+                    <ul class="list-disc pl-4 space-y-1 text-charcoal/90">
+                        <li><strong>第一步 · 仰卧手臂雪天使（8次）</strong>：先在垫上让前侧肋骨沉下来，释放胸小肌与肩前束的紧绷。</li>
+                        <li><strong>第二步 · 四足跪姿肩胛俯卧撑（10次）</strong>：保持手肘伸直，体会两侧肩胛骨像蝴蝶翅膀一样轻柔开合，激活前锯肌。</li>
+                        <li><strong>第三步 · 天鹅预备式（6次）</strong>：呼气时用上背部力量带起胸口，沉肩远耳，切忌用腰椎折压。</li>
+                    </ul>
+                    <p class="text-xs text-muted pt-1">💡 小贴士：练习时把注意力放在“锁骨向两侧微笑展开”，脖子后侧始终保持长而松弛。</p>
+                `;
+            }
+            if (q.includes('臀') || q.includes('髋') || q.includes('胯') || q.includes('大腿前侧') || q.includes('代偿')) {
+                return `
+                    <p class="font-semibold text-terracotta">🌸 减少大腿前侧与腰部代偿的臀髋觉察</p>
+                    <p>练臀时大腿前侧或腰部抢着发力，通常是因为骨盆处于微微前倾状态，或者髋屈肌过于紧张：</p>
+                    <ul class="list-disc pl-4 space-y-1 text-charcoal/90">
+                        <li><strong>先松后练</strong>：先做 1 分钟<strong>「鸽子式髋部深度释放」</strong>，让紧绷的髂腰肌放松下来。</li>
+                        <li><strong>肩桥逐节卷动（8次）</strong>：起身前先做微小的骨盆后倾（尾骨先离地），最高点时让肋骨略低于骨盆，脚跟温柔向臀部方向轻拉。</li>
+                        <li><strong>侧卧蚌式开合（每侧15次）</strong>：想象后背靠墙，上方骨盆绝对不向后翻倒，用臀部外侧深处精准发力。</li>
+                    </ul>
+                `;
+            }
+            if (q.includes('肚子') || q.includes('腹') || q.includes('核心') || q.includes('盆底') || q.includes('腰')) {
+                return `
+                    <p class="font-semibold text-sageDark">✨ 温柔唤醒深层腹横肌与盆底肌</p>
+                    <p>普拉提的核心力量不是憋气硬挤出来的，而是伴随着呼气自然向内“收束”的：</p>
+                    <ul class="list-disc pl-4 space-y-1 text-charcoal/90">
+                        <li><strong>呼吸先行</strong>：鼻吸时感受下肋骨向两侧横向打开；口呼时想象把一条温热的丝巾轻轻系在腰间，小腹由下往上温柔贴向脊柱。</li>
+                        <li><strong>死虫式核心抗伸展（12次）</strong>：对侧手脚延伸时，下腰椎与垫面的空隙保持恒定，一旦腰部拱起就减小下放角度。</li>
+                        <li><strong>脊柱向前伸展（6次）</strong>：坐立呼气收腹，想象越过身前的大球向前卷动，拉伸整条后表链。</li>
+                    </ul>
+                `;
+            }
+            return `
+                <p class="font-semibold text-sageDark">🌿 为你定制的今日身心平衡流动</p>
+                <p>无论你现在精力如何，都可以从<strong>「横向肋间呼吸」</strong>开始，让神经系统先安定下来，再依次完成这组温和全身串联：</p>
+                <ul class="list-disc pl-4 space-y-1 text-charcoal/90">
+                    <li><strong>唤醒呼吸</strong>：前往「呼吸正念」跟随浅色弥散光晕完成 5 轮 4-2-6 呼吸。</li>
+                    <li><strong>脊柱灵动</strong>：<strong>肩桥逐节卷动</strong>（8次）+ <strong>侧卧书本开合</strong>（每侧6次）。</li>
+                    <li><strong>核心与下肢</strong>：<strong>死虫式</strong>（12次）+ <strong>侧卧直腿上下抬</strong>（每侧10次）。</li>
+                </ul>
+                <p class="text-xs text-muted pt-1">如需接入云端大模型获得更个性化的对话，可点击右上角「接入 API」填入你的密钥。</p>
+            `;
+        }
+
+        async function handleSendAiMessage() {
+            const inputEl = document.getElementById('ai-user-input');
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            inputEl.value = '';
+            appendChatBubble('user', text.replace(/</g, '&lt;'));
+
+            const loadingBubble = appendChatBubble('ai', '<span class="text-muted flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sage animate-ping"></span>正在倾听你的身体需求...</span>');
+            const cfg = getAiConfig();
+
+            // 若未填写 API Key，直接使用内置专家知识库引擎
+            if (!cfg.apiKey) {
+                setTimeout(() => {
+                    loadingBubble.querySelector('div').innerHTML = generateOfflinePilatesResponse(text);
+                }, 450);
+                return;
+            }
+
+            const systemPrompt = '你是一位温柔、专业、富有解剖学洞察力的普拉提私人导师。请用温暖治愈、不制造身材焦虑的中文回答用户问题，给出清晰的呼吸节奏、目标肌群、放松部位和防代偿细节。';
+
+            try {
+                let replyText = '';
+                if (cfg.provider === 'gemini') {
+                    const model = cfg.model || 'gemini-2.5-flash';
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(cfg.apiKey)}`;
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `${systemPrompt}\n\n用户提问：${text}` }] }]
+                        })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error?.message || 'Gemini 请求失败');
+                    replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                } else {
+                    const baseUrl = (cfg.baseUrl || 'https://api.deepseek.com/v1').replace(/\/$/, '');
+                    const res = await fetch(`${baseUrl}/chat/completions`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${cfg.apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: cfg.model || 'deepseek-chat',
+                            messages: [
+                                { role: 'system', content: systemPrompt },
+                                { role: 'user', content: text }
+                            ]
+                        })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error?.message || 'API 请求失败');
+                    replyText = data.choices?.[0]?.message?.content || '';
+                }
+
+                if (replyText) {
+                    loadingBubble.querySelector('div').innerHTML = replyText
+                        .replace(/</g, '&lt;')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>');
+                } else {
+                    throw new Error('空响应');
+                }
+            } catch (err) {
+                console.warn('云端 AI 调用异常，自动切换内置专家引擎:', err);
+                loadingBubble.querySelector('div').innerHTML = `
+                    <div class="text-[11px] text-terracotta mb-1">云端连接暂未通畅，已为你切换至内置专家知识库回答：</div>
+                    ${generateOfflinePilatesResponse(text)}
+                `;
+            }
+        }
+
+        // ==================== 7. 四大定制主题疗愈音景引擎（林间清晨 / 雨夜静谧 / 圣诞前夜 / 海风舒展） ====================
+        let audioCtx = null;
+        let masterGain = null;
+        let bgmBusGain = null;
+        let noiseBusGain = null;
+        let activeNodes = [];
+        let sequencerTimer = null;
+        let ambienceEventTimer = null;
+        let isMusicPlaying = false;
+        let currentTrackIndex = 0;
+
+        const TRACK_META = [
+            {
+                name: '林间清晨 · 晨雾微风与露水钢琴',
+                subtitle: '林间清晨 · 70 BPM 柔绒毛毡钢琴与晨雾微风'
+            },
+            {
+                name: '雨夜静谧 · 窗畔细雨与深邃琴音',
+                subtitle: '雨夜静谧 · 65 BPM 低通滤波雨幕与悠远琴音'
+            },
+            {
+                name: '圣诞前夜 · 暖炉微响与冬夜柔钢',
+                subtitle: '圣诞前夜 · 68 BPM 壁炉木柴微响与温暖和弦'
+            },
+            {
+                name: '海风舒展 · 夏日潮汐与远方海鸥',
+                subtitle: '海风舒展 · 75 BPM 流动海浪、海鸥回声与清爽钢琴'
+            }
+        ];
+
+        function toggleMusicModal() {
+            document.getElementById('modal-music').classList.toggle('hidden');
+        }
+
+        function stopAudioEngine() {
+            activeNodes.forEach(node => {
+                try { node.stop?.(); node.disconnect?.(); } catch {}
+            });
+            activeNodes = [];
+            if (sequencerTimer) {
+                clearInterval(sequencerTimer);
+                sequencerTimer = null;
+            }
+            if (ambienceEventTimer) {
+                clearInterval(ambienceEventTimer);
+                ambienceEventTimer = null;
+            }
+        }
+
+        // 播放单个“柔绒毛毡钢琴 / 钢片琴微光”音符
+        function triggerFeltPianoNote(freq, startTime, duration, velocity = 0.045, options = {}) {
+            if (!audioCtx || !bgmBusGain) return;
+
+            const { cutoff = 520, isCelesta = false, pan = 0 } = options;
+            const oscFundamental = audioCtx.createOscillator();
+            const oscOvertone = audioCtx.createOscillator();
+            const noteFilter = audioCtx.createBiquadFilter();
+            const envGain = audioCtx.createGain();
+
+            oscFundamental.type = 'sine';
+            oscFundamental.frequency.setValueAtTime(freq, startTime);
+
+            oscOvertone.type = isCelesta ? 'sine' : 'triangle';
+            oscOvertone.frequency.setValueAtTime(isCelesta ? freq * 3 : freq * 2, startTime);
+
+            const overtoneGain = audioCtx.createGain();
+            overtoneGain.gain.setValueAtTime(isCelesta ? 0.08 : 0.14, startTime);
+
+            noteFilter.type = 'lowpass';
+            noteFilter.frequency.setValueAtTime(cutoff, startTime);
+            noteFilter.Q.setValueAtTime(0.7, startTime);
+
+            const attack = isCelesta ? 0.08 : 0.35;
+            envGain.gain.setValueAtTime(0.0001, startTime);
+            envGain.gain.linearRampToValueAtTime(velocity, startTime + attack);
+            envGain.gain.exponentialRampToValueAtTime(velocity * 0.52, startTime + duration * 0.5);
+            envGain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+            oscFundamental.connect(noteFilter);
+            oscOvertone.connect(overtoneGain);
+            overtoneGain.connect(noteFilter);
+            noteFilter.connect(envGain);
+
+            if (audioCtx.createStereoPanner && pan !== 0) {
+                const panner = audioCtx.createStereoPanner();
+                panner.pan.setValueAtTime(pan, startTime);
+                envGain.connect(panner);
+                panner.connect(bgmBusGain);
+            } else {
+                envGain.connect(bgmBusGain);
+            }
+
+            oscFundamental.start(startTime);
+            oscOvertone.start(startTime);
+            oscFundamental.stop(startTime + duration + 0.12);
+            oscOvertone.stop(startTime + duration + 0.12);
+        }
+
+        // 模拟远方混响柔化的海鸥鸣叫（仅用于“海风舒展”主题）
+        function triggerDistantSeagull(startTime) {
+            if (!audioCtx || !noiseBusGain) return;
+            const osc = audioCtx.createOscillator();
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            // 海鸥滑音包络：轻柔上扬后缓缓滑落
+            osc.frequency.setValueAtTime(760, startTime);
+            osc.frequency.exponentialRampToValueAtTime(980, startTime + 0.22);
+            osc.frequency.exponentialRampToValueAtTime(620, startTime + 0.78);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(920, startTime); // 陡峭高切滤除尖锐感
+
+            gain.gain.setValueAtTime(0.0001, startTime);
+            gain.gain.linearRampToValueAtTime(0.014, startTime + 0.18);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.85);
+
+            osc.connect(filter);
+            filter.connect(gain);
+
+            if (audioCtx.createStereoPanner) {
+                const panner = audioCtx.createStereoPanner();
+                panner.pan.setValueAtTime((Math.random() * 1.2) - 0.6, startTime);
+                gain.connect(panner);
+                panner.connect(noiseBusGain);
+            } else {
+                gain.connect(noiseBusGain);
+            }
+
+            osc.start(startTime);
+            osc.stop(startTime + 0.9);
+        }
+
+        // 主题 1：林间清晨（70 BPM · 温暖模拟铺底 + 露水毛毡钢琴 + 晨雾树叶微风）
+        function startForestMorningScene() {
+            const padFreqs = [87.31, 130.81, 196.00, 220.00]; // Fmaj9 温暖基底
+            createPadLayer(padFreqs, 330, 0.22, 0.045);
+
+            // 70 BPM => 1拍 = 0.857s，4拍一小节 = 3428ms
+            const voicings = [
+                [174.61, 261.63, 329.63, 392.00], // Fmaj9
+                [146.83, 220.00, 261.63, 329.63], // Dm9
+                [196.00, 246.94, 293.66, 392.00], // G6
+                [130.81, 196.00, 246.94, 329.63]  // Cmaj9
+            ];
+            let bar = 0;
+            const playBar = () => {
+                if (!isMusicPlaying || !audioCtx) return;
+                const chord = voicings[bar % voicings.length];
+                const now = audioCtx.currentTime;
+                triggerFeltPianoNote(chord[0] * 0.5, now, 3.2, 0.036, { cutoff: 460 });
+                triggerFeltPianoNote(chord[1], now + 0.3, 3.3, 0.034, { cutoff: 540, pan: -0.25 });
+                triggerFeltPianoNote(chord[3], now + 1.4, 3.1, 0.030, { cutoff: 620, pan: 0.25 });
+                if (bar % 2 === 1) {
+                    triggerFeltPianoNote(chord[2] * 2, now + 2.3, 2.8, 0.018, { cutoff: 760, isCelesta: true, pan: 0.35 });
+                }
+                bar++;
+            };
+            playBar();
+            sequencerTimer = setInterval(playBar, 3428);
+
+            // 晨雾树叶微风白噪音
+            createFilteredNoiseLayer('pink', 640, 0.42, 0.08);
+        }
+
+        // 主题 2：雨夜静谧（65 BPM · 深邃雨幕白噪音 + 低动态夜曲毛毡钢琴）
+        function startQuietRainScene() {
+            const padFreqs = [73.42, 110.00, 164.81, 196.00]; // Dm9 静谧夜色铺底
+            createPadLayer(padFreqs, 270, 0.24, 0.035);
+
+            // 65 BPM => 1拍 = 0.923s，4拍一小节 = 3692ms
+            const voicings = [
+                [146.83, 220.00, 261.63, 329.63], // Dm9
+                [116.54, 174.61, 220.00, 261.63], // Bbmaj7
+                [130.81, 196.00, 246.94, 293.66], // Cmaj9
+                [110.00, 164.81, 196.00, 246.94]  // Am7
+            ];
+            let bar = 0;
+            const playBar = () => {
+                if (!isMusicPlaying || !audioCtx) return;
+                const chord = voicings[bar % voicings.length];
+                const now = audioCtx.currentTime;
+                triggerFeltPianoNote(chord[0] * 0.5, now, 3.5, 0.038, { cutoff: 420 });
+                triggerFeltPianoNote(chord[2], now + 0.5, 3.4, 0.030, { cutoff: 480, pan: -0.2 });
+                triggerFeltPianoNote(chord[3], now + 1.85, 3.2, 0.026, { cutoff: 520, pan: 0.2 });
+                bar++;
+            };
+            playBar();
+            sequencerTimer = setInterval(playBar, 3692);
+
+            // 平滑细雨声景（双重低通，绝无雷鸣或突兀声响）
+            createFilteredNoiseLayer('pink', 780, 0.52, 0.03);
+        }
+
+        // 主题 3：圣诞前夜（68 BPM · 壁炉木柴微响 + 温暖大调和弦与钢片琴星光）
+        function startChristmasEveScene() {
+            const padFreqs = [82.41, 130.81, 164.81, 246.94]; // Cmaj7 温暖包裹感
+            createPadLayer(padFreqs, 360, 0.23, 0.05);
+
+            // 68 BPM => 1拍 = 0.882s，4拍一小节 = 3529ms
+            const voicings = [
+                [130.81, 196.00, 246.94, 329.63], // Cmaj9
+                [174.61, 220.00, 261.63, 329.63], // Fmaj7
+                [146.83, 196.00, 246.94, 293.66], // Dm7/G
+                [130.81, 164.81, 196.00, 293.66]  // Cadd9
+            ];
+            let bar = 0;
+            const playBar = () => {
+                if (!isMusicPlaying || !audioCtx) return;
+                const chord = voicings[bar % voicings.length];
+                const now = audioCtx.currentTime;
+                triggerFeltPianoNote(chord[0] * 0.5, now, 3.3, 0.038, { cutoff: 480 });
+                triggerFeltPianoNote(chord[1], now + 0.2, 3.2, 0.034, { cutoff: 540 });
+                triggerFeltPianoNote(chord[2], now + 1.1, 3.0, 0.030, { cutoff: 560 });
+                // 柔和如窗外雪花微光的钢片琴泛音
+                triggerFeltPianoNote(chord[3] * 2, now + 2.0, 2.6, 0.017, { cutoff: 880, isCelesta: true, pan: 0.3 });
+                bar++;
+            };
+            playBar();
+            sequencerTimer = setInterval(playBar, 3529);
+
+            // 拟真壁炉温暖棕红底噪 + 极轻微柔和木柴微响
+            createFilteredNoiseLayer('brown', 380, 0.55, 0.06);
+            ambienceEventTimer = setInterval(() => {
+                if (!isMusicPlaying || !audioCtx || Math.random() > 0.55) return;
+                const now = audioCtx.currentTime;
+                const crackOsc = audioCtx.createOscillator();
+                const crackGain = audioCtx.createGain();
+                const crackFilter = audioCtx.createBiquadFilter();
+                crackOsc.type = 'triangle';
+                crackOsc.frequency.setValueAtTime(140 + Math.random() * 120, now);
+                crackFilter.type = 'bandpass';
+                crackFilter.frequency.value = 520;
+                crackGain.gain.setValueAtTime(0.0001, now);
+                crackGain.gain.linearRampToValueAtTime(0.012, now + 0.015);
+                crackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+                crackOsc.connect(crackFilter);
+                crackFilter.connect(crackGain);
+                crackGain.connect(noiseBusGain);
+                crackOsc.start(now);
+                crackOsc.stop(now + 0.08);
+            }, 950);
+        }
+
+        // 主题 4：海风舒展（75 BPM · 左右潮汐海浪 + 混响海鸥回声 + 清爽流动钢琴）
+        function startSummerOceanScene() {
+            const padFreqs = [98.00, 146.83, 220.00, 246.94]; // Gmaj9 开阔明亮海岸铺底
+            createPadLayer(padFreqs, 420, 0.20, 0.06);
+
+            // 75 BPM => 1拍 = 0.8s，4拍一小节 = 3200ms
+            const voicings = [
+                [196.00, 246.94, 293.66, 369.99], // Gmaj7
+                [164.81, 246.94, 293.66, 392.00], // Em7
+                [130.81, 196.00, 246.94, 329.63], // Cmaj9
+                [146.83, 220.00, 261.63, 329.63]  // D6/9
+            ];
+            let bar = 0;
+            const playBar = () => {
+                if (!isMusicPlaying || !audioCtx) return;
+                const chord = voicings[bar % voicings.length];
+                const now = audioCtx.currentTime;
+                // 像海浪轻拍沙滩的流动琶音
+                triggerFeltPianoNote(chord[0] * 0.5, now, 3.0, 0.036, { cutoff: 580 });
+                triggerFeltPianoNote(chord[1], now + 0.4, 2.8, 0.034, { cutoff: 680, pan: -0.3 });
+                triggerFeltPianoNote(chord[2], now + 0.8, 2.8, 0.032, { cutoff: 720, pan: 0.0 });
+                triggerFeltPianoNote(chord[3], now + 1.2, 3.0, 0.030, { cutoff: 760, pan: 0.3 });
+                if (bar % 2 === 0) {
+                    triggerFeltPianoNote(chord[2] * 2, now + 2.1, 2.5, 0.018, { cutoff: 940, isCelesta: true, pan: -0.25 });
+                }
+                bar++;
+            };
+            playBar();
+            sequencerTimer = setInterval(playBar, 3200);
+
+            // 潮汐海浪呼吸滤波噪声（0.11 Hz 约 9 秒一次海浪涨落）
+            createFilteredNoiseLayer('pink', 680, 0.50, 0.11, true);
+
+            // 远处温柔海鸥回声（每隔 9-13 秒轻柔掠过一次）
+            setTimeout(() => { if (isMusicPlaying && currentTrackIndex === 3) triggerDistantSeagull(audioCtx.currentTime); }, 1800);
+            ambienceEventTimer = setInterval(() => {
+                if (!isMusicPlaying || !audioCtx || currentTrackIndex !== 3) return;
+                triggerDistantSeagull(audioCtx.currentTime);
+                if (Math.random() > 0.5) {
+                    triggerDistantSeagull(audioCtx.currentTime + 1.35);
+                }
+            }, 10500);
+        }
+
+        // 通用温暖模拟铺底生成器
+        function createPadLayer(freqs, cutoffFreq, gainLevel, lfoRate) {
+            const padFilter = audioCtx.createBiquadFilter();
+            padFilter.type = 'lowpass';
+            padFilter.frequency.value = cutoffFreq;
+
+            const padMaster = audioCtx.createGain();
+            padMaster.gain.value = gainLevel;
+
+            const driftLfo = audioCtx.createOscillator();
+            const driftGain = audioCtx.createGain();
+            driftLfo.frequency.value = lfoRate;
+            driftGain.gain.value = 60;
+            driftLfo.connect(driftGain);
+            driftGain.connect(padFilter.frequency);
+            driftLfo.start();
+            activeNodes.push(driftLfo, driftGain);
+
+            freqs.forEach((f, idx) => {
+                const osc = audioCtx.createOscillator();
+                osc.type = idx === 0 ? 'sine' : 'triangle';
+                osc.frequency.value = f;
+                osc.detune.value = (idx % 2 === 0 ? 1 : -1) * 4;
+                osc.connect(padFilter);
+                osc.start();
+                activeNodes.push(osc);
+            });
+
+            padFilter.connect(padMaster);
+            padMaster.connect(bgmBusGain);
+            activeNodes.push(padFilter, padMaster);
+        }
+
+        // 通用低通滤波自然声景生成器（支持海浪潮汐呼吸调制）
+        function createFilteredNoiseLayer(type = 'pink', cutoff = 700, level = 0.45, waveRate = 0.08, isOceanTide = false) {
+            const bufferSize = audioCtx.sampleRate * 4;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+
+            if (type === 'pink') {
+                let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    b0 = 0.99886 * b0 + white * 0.0555179;
+                    b1 = 0.99332 * b1 + white * 0.0750759;
+                    b2 = 0.96900 * b2 + white * 0.1538520;
+                    b3 = 0.86650 * b3 + white * 0.3104856;
+                    b4 = 0.55000 * b4 + white * 0.5329522;
+                    b5 = -0.7616 * b5 - white * 0.0168980;
+                    output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.036;
+                    b6 = white * 0.115926;
+                }
+            } else {
+                let lastOut = 0.0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    output[i] = (lastOut + (0.02 * white)) / 1.02;
+                    lastOut = output[i];
+                    output[i] *= 0.24;
+                }
+            }
+
+            const source = audioCtx.createBufferSource();
+            source.buffer = noiseBuffer;
+            source.loop = true;
+
+            const lp1 = audioCtx.createBiquadFilter();
+            lp1.type = 'lowpass';
+            lp1.frequency.value = cutoff;
+
+            const lp2 = audioCtx.createBiquadFilter();
+            lp2.type = 'lowpass';
+            lp2.frequency.value = cutoff * 1.25;
+
+            const layerGain = audioCtx.createGain();
+            layerGain.gain.value = level;
+
+            // 如果是海岸潮汐，添加缓慢的潮水涨落滤波与声场微摆
+            if (isOceanTide) {
+                const tideLfo = audioCtx.createOscillator();
+                const tideFilterDepth = audioCtx.createGain();
+                tideLfo.frequency.value = waveRate;
+                tideFilterDepth.gain.value = 260;
+                tideLfo.connect(tideFilterDepth);
+                tideFilterDepth.connect(lp1.frequency);
+                tideLfo.start();
+                activeNodes.push(tideLfo, tideFilterDepth);
+            }
+
+            source.connect(lp1);
+            lp1.connect(lp2);
+            lp2.connect(layerGain);
+            layerGain.connect(noiseBusGain);
+            source.start();
+            activeNodes.push(source, lp1, lp2, layerGain);
+        }
+
+        function startAudioTrack(index) {
+            stopAudioEngine();
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = 0.92;
+                masterGain.connect(audioCtx.destination);
+
+                bgmBusGain = audioCtx.createGain();
+                bgmBusGain.connect(masterGain);
+
+                noiseBusGain = audioCtx.createGain();
+                noiseBusGain.connect(masterGain);
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if (index === 0) startForestMorningScene();
+            else if (index === 1) startQuietRainScene();
+            else if (index === 2) startChristmasEveScene();
+            else if (index === 3) startSummerOceanScene();
+
+            updateMixLevels();
+        }
+
+        function updateMixLevels() {
+            if (!audioCtx || !bgmBusGain || !noiseBusGain) return;
+            const bgmVal = parseFloat(document.getElementById('bgm-volume').value);
+            const noiseVal = parseFloat(document.getElementById('noise-volume').value);
+            bgmBusGain.gain.setTargetAtTime(bgmVal, audioCtx.currentTime, 0.08);
+            noiseBusGain.gain.setTargetAtTime(noiseVal, audioCtx.currentTime, 0.08);
+        }
+
+        function selectTrack(index) {
+            currentTrackIndex = index;
+            document.querySelectorAll('.track-btn').forEach((btn, idx) => {
+                btn.className = idx === index
+                    ? 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border-2 border-sage text-left transition'
+                    : 'track-btn flex items-center justify-between p-3.5 rounded-2xl bg-white border border-clay/70 text-left transition';
+            });
+            document.getElementById('mobile-bar-track-name').textContent = TRACK_META[index].name;
+            document.getElementById('music-modal-subtitle').textContent = TRACK_META[index].subtitle;
+            if (isMusicPlaying) {
+                startAudioTrack(index);
+            }
+        }
+
+        function togglePlayMusic() {
+            isMusicPlaying = !isMusicPlaying;
+            if (isMusicPlaying) {
+                startAudioTrack(currentTrackIndex);
+            } else {
+                stopAudioEngine();
+            }
+            updateMusicUI();
+        }
+
+        function updateMusicUI() {
+            const iconName = isMusicPlaying ? 'pause' : 'play';
+            document.getElementById('mobile-bar-play-icon').setAttribute('data-lucide', iconName);
+            document.getElementById('modal-play-icon').setAttribute('data-lucide', iconName);
+            document.getElementById('modal-play-text').textContent = isMusicPlaying ? '暂停播放' : '开启无缝疗愈音景';
+
+            const headerDot = document.getElementById('header-music-dot');
+            const mobileBar = document.getElementById('music-mini-mobile');
+            if (isMusicPlaying) {
+                headerDot.className = 'w-2 h-2 rounded-full bg-sage animate-ping';
+                mobileBar.classList.remove('hidden');
+            } else {
+                headerDot.className = 'w-2 h-2 rounded-full bg-muted';
+                mobileBar.classList.add('hidden');
+            }
+            safeCreateIcons();
+        }
+
+        // ==================== 8. 浅色弥散风格呼吸正念引导计时器（三阶段治愈色彩流转） ====================
+        let breathInterval = null;
+        let isBreathing = false;
+
+        function toggleBreathingGuide() {
+            const btn = document.getElementById('btn-toggle-breath');
+            const blob1 = document.getElementById('breath-blob-1');
+            const blob2 = document.getElementById('breath-blob-2');
+            const coreRing = document.getElementById('breath-core-ring');
+            const phaseBadge = document.getElementById('breath-phase-badge');
+            const phaseText = document.getElementById('breath-phase-text');
+            const timerText = document.getElementById('breath-timer-text');
+            const detailText = document.getElementById('breath-guide-detail');
+
+            const pillInhale = document.getElementById('pill-inhale');
+            const pillHold = document.getElementById('pill-hold');
+            const pillExhale = document.getElementById('pill-exhale');
+
+            const resetPills = () => {
+                pillInhale.className = 'px-2.5 py-1 rounded-full bg-white/70 text-muted border border-clay/50 transition';
+                pillHold.className = 'px-2.5 py-1 rounded-full bg-white/70 text-muted border border-clay/50 transition';
+                pillExhale.className = 'px-2.5 py-1 rounded-full bg-white/70 text-muted border border-clay/50 transition';
+            };
+
+            if (isBreathing) {
+                isBreathing = false;
+                clearInterval(breathInterval);
+                blob1.style.transform = 'scale(1) translate(-16px, -12px)';
+                blob2.style.transform = 'scale(1) translate(16px, 12px)';
+                coreRing.style.transform = 'scale(1)';
+                coreRing.style.borderColor = 'rgba(158, 184, 164, 0.6)';
+                btn.textContent = '开启呼吸光晕引导';
+                phaseBadge.textContent = '静心准备';
+                phaseBadge.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#EAEFE9] text-sageDark mb-1';
+                phaseText.textContent = '轻柔安坐';
+                timerText.textContent = '4秒吸 · 2秒停 · 6秒呼';
+                resetPills();
+                return;
+            }
+
+            isBreathing = true;
+            btn.textContent = '结束呼吸引导';
+            let sec = 0;
+
+            const updateBreathStep = () => {
+                const cycle = sec % 12;
+                resetPills();
+
+                if (cycle < 4) {
+                    // 吸气阶段：晨雾鼠尾草绿（扩胸充盈）
+                    blob1.style.backgroundColor = 'rgba(166, 204, 177, 0.78)';
+                    blob2.style.backgroundColor = 'rgba(205, 228, 208, 0.75)';
+                    blob1.style.transform = 'scale(1.38) translate(-10px, -8px)';
+                    blob2.style.transform = 'scale(1.34) translate(10px, 8px)';
+                    coreRing.style.transform = 'scale(1.16)';
+                    coreRing.style.borderColor = '#8CB596';
+
+                    phaseBadge.textContent = '鼻吸 · 晨雾绿';
+                    phaseBadge.className = 'text-[10px] font-medium px-2.5 py-0.5 rounded-full bg-[#E3F0E6] text-[#4F7558] mb-1';
+                    phaseText.textContent = '肋骨温柔舒展';
+                    timerText.textContent = `吸气 ${4 - cycle} 秒`;
+                    detailText.textContent = '感受下肋骨向左右两侧与后背部立体打开，双肩依然保持松弛下沉。';
+                    pillInhale.className = 'px-2.5 py-1 rounded-full bg-[#E3F0E6] text-[#4F7558] font-medium border border-[#8CB596] transition';
+                } else if (cycle < 6) {
+                    // 屏息阶段：暖阳燕麦杏（饱满悬停）
+                    blob1.style.backgroundColor = 'rgba(235, 198, 168, 0.78)';
+                    blob2.style.backgroundColor = 'rgba(245, 222, 196, 0.78)';
+                    blob1.style.transform = 'scale(1.40) translate(-8px, -6px)';
+                    blob2.style.transform = 'scale(1.36) translate(8px, 6px)';
+                    coreRing.style.transform = 'scale(1.18)';
+                    coreRing.style.borderColor = '#D9A78B';
+
+                    phaseBadge.textContent = '屏息 · 暖阳杏';
+                    phaseBadge.className = 'text-[10px] font-medium px-2.5 py-0.5 rounded-full bg-[#F7ECE3] text-[#9E6A4B] mb-1';
+                    phaseText.textContent = '安稳轻悬';
+                    timerText.textContent = `停留 ${6 - cycle} 秒`;
+                    detailText.textContent = '保留胸廓的充盈感，不憋气不紧绷，头顶向天空方向温柔延伸。';
+                    pillHold.className = 'px-2.5 py-1 rounded-full bg-[#F7ECE3] text-[#9E6A4B] font-medium border border-[#D9A78B] transition';
+                } else {
+                    // 呼气阶段：暮色海盐蓝（深层凝聚沉降）
+                    blob1.style.backgroundColor = 'rgba(173, 201, 219, 0.75)';
+                    blob2.style.backgroundColor = 'rgba(204, 222, 235, 0.75)';
+                    blob1.style.transform = 'scale(0.95) translate(-16px, -12px)';
+                    blob2.style.transform = 'scale(0.95) translate(16px, 12px)';
+                    coreRing.style.transform = 'scale(0.96)';
+                    coreRing.style.borderColor = '#8FA8B8';
+
+                    phaseBadge.textContent = '口呼 · 海盐蓝';
+                    phaseBadge.className = 'text-[10px] font-medium px-2.5 py-0.5 rounded-full bg-[#E6EFF5] text-[#4E6E82] mb-1';
+                    phaseText.textContent = '核心向内凝聚';
+                    timerText.textContent = `呼气 ${12 - cycle} 秒`;
+                    detailText.textContent = '双唇微张如吹拂烛火般缓慢吐气，前侧肋骨温柔下沉，小腹深层向内收拢。';
+                    pillExhale.className = 'px-2.5 py-1 rounded-full bg-[#E6EFF5] text-[#4E6E82] font-medium border border-[#8FA8B8] transition';
+                }
+                sec++;
+            };
+
+            updateBreathStep();
+            breathInterval = setInterval(updateBreathStep, 1000);
+        }
+
+        // ==================== 9. 轻量提示与安全图标初始化 ====================
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-text').textContent = msg;
+            box.classList.remove('opacity-0');
+            setTimeout(() => box.classList.add('opacity-0'), 2600);
+        }
+
+        function safeCreateIcons() {
+            try {
+                if (typeof window.lucide !== 'undefined' && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                    return;
+                }
+            } catch (err) {
+                console.warn('Lucide 图标库渲染跳过:', err);
+            }
+
+            const fallbackPaths = {
+                'sparkles': '<path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3z"/>',
+                'search': '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+                'wind': '<path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h14a3 3 0 1 1-3 3"/><path d="M3 16h8"/>',
+                'camera': '<path d="M4 7h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3"/>',
+                'play': '<polygon points="6 4 20 12 6 20 6 4"/>',
+                'pause': '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>',
+                'music': '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+                'x': '<path d="M18 6L6 18"/><path d="M6 6l12 12"/>',
+                'arrow-right': '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
+                'arrow-left': '<path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/>',
+                'home': '<path d="M3 10l9-7 9 7v10H3z"/>',
+                'book-open': '<path d="M2 6s4-2 10 0 10 0 10 0v12s-4-2-10 0-10 0-10 0z"/>'
+            };
+
+            document.querySelectorAll('[data-lucide]').forEach(el => {
+                if (el.dataset.fallbackRendered === 'true') return;
+                const name = el.getAttribute('data-lucide');
+                const svgInner = fallbackPaths[name] || '<circle cx="12" cy="12" r="6"/>';
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('stroke-width', '2');
+                svg.setAttribute('stroke-linecap', 'round');
+                svg.setAttribute('stroke-linejoin', 'round');
+                svg.setAttribute('class', el.getAttribute('class') || 'w-4 h-4');
+                svg.dataset.fallbackRendered = 'true';
+                svg.innerHTML = svgInner;
+                el.replaceWith(svg);
+            });
+        }
+
+        window.onload = async function() {
+            try {
+                await loadMovesFromDB();
+                updateHomeCounts();
+                updateAiBadge();
+            } catch (err) {
+                console.error('初始化数据加载失败，使用默认动作库兜底:', err);
+                allMoves = [...DEFAULT_MOVES];
+                updateHomeCounts();
+                updateAiBadge();
+            } finally {
+                safeCreateIcons();
+            }
+        };
+    </script>
+</body>
+</html>
